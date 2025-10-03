@@ -1,0 +1,42 @@
+// ===============================================================
+// Pagination
+// ===============================================================
+
+.pagination
+    text-align: center
+    margin: 40px 0
+    .page-numbers
+        padding: 0 20px
+        text-align: center
+        height: 36px
+        line-height: 36px
+        font-size: 15px
+        display: inline-block
+        border-radius: 30px
+        color: $color-blue
+        transition: all 200ms ease-in-out
+        background: transparent
+        font-weight: 500
+        margin: 0 5px
+        outline: none
+        border: 2px solid $color-blue
+        text-decoration: none
+        
+        &:hover
+            background: $color-blue
+            color: $color-white
+            
+        &.current
+            background: $color-blue
+            color: $color-white
+            cursor: default
+            
+        &.dots
+            border: none
+            background: transparent
+            color: $color-blue
+            cursor: default
+            
+            &:hover
+                background: transparent
+                color: $color-blue
