@@ -7,7 +7,6 @@ import { toggleSearch } from "./components/toggle-search";
 import { moveItems } from "./components/move-items";
 import { trimItems } from "./components/trim-items";
 import { replaceDates } from "./components/replace-dates";
-import { tooltips} from "./components/tooltipster";
 import "./components/modal";
 
 
@@ -24,7 +23,6 @@ $(() => {
     moveItems();
     trimItems();
     replaceDates();
-    tooltips();
     mainSlider();
 
     //preloader

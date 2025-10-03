@@ -50,7 +50,6 @@ $v = wp_get_theme()->version;
 echo '<link rel="stylesheet" type="text/css" href="'. esc_url(get_template_directory_uri()) .'/css/2025.css?v='. esc_attr($v) .'">';
 //}
 ?>
-    <script src="<?php bloginfo('template_url'); ?>/js/front.js"></script>
 
 	
 <!-- Facebook Pixel Code -->

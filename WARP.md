@@ -6,7 +6,8 @@ UFO BUFO is a modern, optimized WordPress theme for the UFO BUFO psychedelic mus
 ## Key Features
 - **Legacy JavaScript Architecture**: jQuery-based component system with webpack bundling
 - **Professional Build System**: Separate development and distribution workflows
-- **Pre-compiled Assets**: Single front.js bundle (7.2MB) built with webpack/babel
+- **Optimized Assets**: Single front.js bundle (148KB) built with webpack/babel
+- **External jQuery**: Uses WordPress-provided jQuery instead of bundling
 - **Clean Distribution**: Production-ready builds exclude source files and dev tools
 - **SASS Architecture**: Component-based styling with BEM methodology
 - **Mobile Responsive**: Mobile-first design with adaptive quality
@@ -16,20 +17,19 @@ UFO BUFO is a modern, optimized WordPress theme for the UFO BUFO psychedelic mus
 ```
 UfoBufo-secondDecade/
 ├── js/                      # JavaScript files (legacy structure)
-│   ├── front.js            # Pre-compiled bundle (7.2MB) - loaded in header
+│   ├── front.js            # Optimized bundle (148KB) - loaded in header
 │   ├── ostryweb.js         # Additional script (161B) - loaded in footer
 │   └── src/                # JavaScript source files
 │       ├── app.js          # Main entry point
-│       ├── components/     # jQuery-based components (10 files)
+│       ├── components/     # jQuery-based components (8 files)
 │       │   ├── fractal.js           # Homepage lens animation
 │       │   ├── gallerySwiper.js     # Gallery carousel with Swiper
-│       │   ├── modal.js             # Video modal with iziModal
+│       │   ├── modal.js             # Modal with iziModal
 │       │   ├── move-items.js        # Lineup date organization
 │       │   ├── replace-dates.js     # Date localization
 │       │   ├── responsiveMenu.js    # Mobile menu toggle
 │       │   ├── toggle-lineup.js     # Lineup view switcher
 │       │   ├── toggle-search.js     # Search form toggle
-│       │   ├── tooltipster.js       # Tooltip functionality
 │       │   └── trim-items.js        # Text manipulation
 │       └── vendor/
 │           └── iziModal.js  # iziModal library source
@@ -73,23 +73,23 @@ UfoBufo-secondDecade/
 - **CSS**: SASS with BEM methodology
 - **Build System**: Webpack (legacy) and Gulp for building
 
-### JavaScript Libraries (Bundled)
-- **jQuery** (via WordPress) - Core framework
-- **Swiper** - Gallery carousel (imported in gallerySwiper.js)
-- **iziModal** - Image lightbox (from vendor/)
-- **GSAP** - Homepage lens/fractal animations (imported in fractal.js)
-- **BasicScroll** - Parallax effects (imported in app.js)
+### JavaScript Libraries
+- **jQuery 3.7.1** (via WordPress) - Core framework, loaded externally
+- **Swiper 12.0.2** - Gallery carousel (bundled)
+- **iziModal 1.6.1** - Image lightbox (bundled from vendor/)
+- **GSAP 3.13.0** - Homepage lens/fractal animations (bundled)
+- **BasicScroll 3.0.4** - Parallax effects (bundled)
 
 **Library Loading Architecture:**
-- All libraries and components are **bundled into front.js** (7.2MB)
+- **jQuery**: External dependency - uses WordPress-provided jQuery (not bundled)
+- **Other libraries**: Bundled into front.js (148KB optimized)
 - Single pre-compiled bundle approach
 - Loaded via `<script>` tag in header.php
-- External libraries copied to `dist/js/libs/` during distribution build
-- Uses require/import statements in source files
+- Webpack externals configuration prevents jQuery from being bundled
 
 ### Removed Libraries (Oct 2025)
-- ~~VideoJS~~ (684KB) - Commented out code removed
-- ~~Tooltipster~~ (56KB) - Commented out code removed
+- ~~VideoJS~~ - Not used (homepage uses YouTube iframe embed)
+- ~~Tooltipster~~ - Not used (location.php tooltips are commented out)
 - ~~Moment.js~~ - Not used
 - ~~svg4everybody~~ - Not needed
 
@@ -165,21 +165,27 @@ sass css/sass/front.sass css/front.min.css --style=compressed
 The theme uses simple script tag loading:
 
 ### Main JavaScript Bundle
-- **front.js** (7.2MB) - Pre-compiled bundle with all components and libraries
+- **front.js** (148KB) - Optimized bundle with components and libraries
 - Loaded in `<head>` via `<script>` tag in header.php
 - Contains: All components, Swiper, iziModal, GSAP, BasicScroll
-- Single bundle approach for simplicity
+- Uses WordPress jQuery as external dependency (not bundled)
+- 98% size reduction from original 7.2MB bundle
 
 ### Additional Scripts
 - **ostryweb.js** (161B) - Additional utility script
 - Loaded in footer via `<script>` tag in footer.php
 
 ### Distribution Library Files
-During distribution build, external library files are copied to `dist/js/libs/` for reference:
-- swiper.min.js (151KB)
-- izimodal.min.js (26KB)  
-- gsap.min.js (71KB)
-- basicscroll.min.js (10KB)
+During distribution build, external library files are copied to `dist/js/vendor/` for reference:
+- jquery.min.js (85KB) - jQuery 3.7.1
+- swiper.min.js (151KB) - Swiper 12.0.2
+- izimodal.min.js (26KB) - iziModal 1.6.1
+- gsap.min.js (71KB) - GSAP 3.13.0
+- basicscroll.min.js (10KB) - BasicScroll 3.0.4
+
+Additional CSS files in `dist/css/`:
+- swiper.min.css (14KB) - Swiper styles
+- izimodal.min.css (88KB) - iziModal styles
 
 Note: These are included for potential future optimization but currently not used (all bundled in front.js)
 
@@ -250,41 +256,63 @@ npm run dist:package
 
 ### JavaScript
 **Core Application:**
-- front.js: 7.2MB (includes all components and libraries)
+- front.js: 148KB (optimized bundle with components and libraries)
 - ostryweb.js: 161B
+- jQuery: 85KB (loaded from WordPress, not bundled)
 
-**External Libraries (in dist for reference, not loaded separately):**
-- swiper.min.js: 151KB
-- izimodal.min.js: 26KB
-- gsap.min.js: 71KB
-- basicscroll.min.js: 10KB
+**Bundled Libraries (inside front.js):**
+- swiper: 151KB (v12.0.2)
+- izimodal: 26KB (v1.6.1)
+- gsap: 71KB (v3.13.0)
+- basicscroll: 10KB (v3.0.4)
 
 **Total JS Loaded:**
-- All pages: 7.2MB (single front.js bundle)
+- All pages: ~233KB (front.js + WordPress jQuery + ostryweb.js)
+- 98% reduction from original 7.2MB bundle
 
 ### CSS
 - front.min.css: ~150KB (compressed)
 - 2025.css: ~5KB
 
 ### Distribution Package
-- Total theme: ~33MB (mostly images)
+- Total theme: ~25MB (mostly images)
 - PHP files: ~200KB
-- JavaScript: ~7.5MB (front.js + ostryweb.js + libs)
+- JavaScript: ~148KB (front.js optimized bundle)
 - CSS: ~155KB
 - Fonts: ~140KB
 - Images: ~23MB
 
 ## Recent Changes (October 2025)
 
+### Bundle Optimization (October 3, 2025)
+- ✅ Removed unused video.js import from modal.js (homepage uses YouTube iframe)
+- ✅ Removed tooltipster component and imports (location.php tooltips commented out)
+- ✅ Configured webpack to use WordPress jQuery as external dependency
+- ✅ Updated webpack.config.modern.js to point to legacy JS structure
+- ✅ Rebuilt front.js bundle: **7.2MB → 148KB (98% reduction)**
+- ✅ Total JS loaded reduced from 7.2MB to ~233KB (including WordPress jQuery)
+- ✅ Updated documentation to reflect optimized architecture
+
+### Library Updates (October 3, 2025)
+- ✅ Updated iziModal from 1.6.0 to 1.6.1
+- ✅ Verified all other libraries are at latest versions:
+  - jQuery 3.7.1
+  - Swiper 12.0.2
+  - GSAP 3.13.0
+  - BasicScroll 3.0.4
+- ✅ Changed distribution build to place libraries in `js/vendor/` instead of `js/libs/`
+- ✅ Added jQuery to distribution vendor files
+- ✅ Added Swiper CSS to distribution build
+
 ### JS Architecture Restoration
 - ✅ Restored legacy jQuery-based JS architecture from backup
 - ✅ Removed modern ES6 class-based architecture from /assets/js/
 - ✅ Restored jQuery-based components from backup
 - ✅ JS structure restored:
-  - /js/front.js - compiled bundle (7.2MB)
+  - /js/front.js - compiled bundle (now optimized to 148KB)
   - /js/ostryweb.js - additional script
   - /js/src/app.js - main entry point
-  - /js/src/components/ - all component files
+  - /js/src/components/ - 8 active component files
   - /js/src/vendor/iziModal.js
 - ✅ Updated build configuration:
   - webpack.config.js - old webpack config pointing to /js/src/app.js
@@ -294,7 +322,7 @@ npm run dist:package
   - header.php - added front.js script tag
   - footer.php - added ostryweb.js script tag
 - ✅ Updated dist build to copy legacy files
-- ✅ Distribution ready in /dist/ (33MB)
+- ✅ Distribution ready in /dist/ (now ~25MB after optimization)
 
 ### Documentation Added
 - README.md - Development guide

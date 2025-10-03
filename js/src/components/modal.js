@@ -1,12 +1,8 @@
 import $ from "jquery";
-import iziModal from "../vendor/iziModal";
-import videojs from 'video.js';
+// iziModal loaded as global jQuery plugin
 
 
 $(() => {
-
-    let player = null;
-
 
     let modalVideoSettings = {
         appendTo: ".body",
@@ -23,15 +19,9 @@ $(() => {
         transitionOutOverlay: "fadeOut",
         onOpening: function () {
             $("body").addClass("bodyfixedmodal");
-            if ( player ==  null && $( "#video" ).length !== 0 ) {
-                player = videojs('video');
-            }
         },
         onClosing: function () {
             $("body").removeClass("bodyfixedmodal");
-            if( player != null){
-                player.pause();
-            }
         }
     };
 
@@ -62,7 +52,10 @@ $(() => {
 
 
 
-    $("#modal-video").iziModal(modalVideoSettings);
+    // Only initialize if the element exists
+    if ($("#modal-video").length > 0) {
+        $("#modal-video").iziModal(modalVideoSettings);
+    }
     // $("#modal-gallery").iziModal(modalGallerySettings);
 
 

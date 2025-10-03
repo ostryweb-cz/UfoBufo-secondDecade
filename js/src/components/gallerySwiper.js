@@ -1,6 +1,5 @@
 import $ from "jquery";
-import iziModal from "../vendor/iziModal";
-import Swiper from 'swiper';
+// iziModal and Swiper loaded as global scripts
 
 
 export function mainSlider() {
@@ -37,7 +36,8 @@ export function mainSlider() {
 
 
 
-            swiper = new Swiper('.swiper-container', {
+            // Use global Swiper (swiper-bundle includes all modules)
+            swiper = new window.Swiper('.swiper-container', {
                 initialSlide: window.imageIndex - 1,
                 slidesPerView: 1,
                 centeredSlides: true,

@@ -57,20 +57,28 @@
             margin: 0 0 0 0
             left: auto
             right: auto
-            background: transparent
+            background: $color-white
             position: absolute
             top: 50%
             transform: translateY(-50%)
             transition: all 200ms ease-in-out
+            // Swiper 12.x uses SVG icons
+            svg
+                fill: $bluedark-color
             i
-                color: $color-white
+                color: $bluedark-color
             &:hover
-                background: $color-white
+                background: rgba(255, 255, 255, 0.8)
+                svg
+                    fill: $bluedark-color
                 i
                     color: $bluedark-color
 
         &-prev
             left: 30px
+            // Rotate the prev button icon 180 degrees
+            svg
+                transform: rotate(180deg)
         &-next
             right: 30px
     &-pagination

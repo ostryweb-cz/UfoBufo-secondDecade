@@ -1,37 +1,62 @@
-var webpack = require("webpack");
-var path = require("path");
-var nodeModulesPath = path.resolve(__dirname, "node_modules");
+const path = require('path');
+
+const isDevelopment = process.env.NODE_ENV === 'development';
+
 module.exports = {
-	entry: {
-		front: __dirname + "/js/src/app.js"
-	},
-	output: {
-		path: __dirname + "/js",
-		filename: "[name].js"
-	},
-	module: {
-		loaders: [
-			{
-				test: /\.jsx?$/,
-				//loader: "babel-loader",
-                loader: 'babel?presets[]=es2015',
-				exclude: [nodeModulesPath, "/vendor/", "/web/"]
-			}
-		]
-	},
-
-
-	resolve: {
-		alias: {
-			"masonry/masonry": "masonry-layout"
-		}
-	},
-	// devtool: "eval-cheap-module-source-map",
-	plugins: [
-		new webpack.ProvidePlugin({
-			$: "jquery",
-			jQuery: "jquery",
-			"window.jQuery": "jquery"
-		})
-	]
+    mode: isDevelopment ? 'development' : 'production',
+    
+    entry: {
+        front: './js/src/app.js'
+    },
+    
+    // Use external libraries - don't bundle them
+    externals: {
+        'jquery': 'jQuery'
+    },
+    
+    output: {
+        path: path.resolve(__dirname, 'js'),
+        filename: '[name].js',
+        clean: false
+    },
+    
+    module: {
+        rules: [
+            {
+                test: /\.jsx?$/,
+                exclude: /node_modules/,
+                use: {
+                    loader: 'babel-loader',
+                    options: {
+                        presets: [
+                            ['@babel/preset-env', {
+                                targets: '> 0.25%, not dead',
+                                modules: false,
+                                useBuiltIns: 'usage',
+                                corejs: 3
+                            }]
+                        ],
+                        cacheDirectory: true
+                    }
+                }
+            }
+        ]
+    },
+    plugins: [],
+    
+    performance: {
+        hints: isDevelopment ? false : 'warning',
+        maxEntrypointSize: 250000,
+        maxAssetSize: 250000
+    },
+    
+    devtool: isDevelopment ? 'eval-source-map' : 'source-map',
+    
+    stats: {
+        colors: true,
+        modules: false,
+        children: false,
+        chunks: false,
+        chunkModules: false
+    }
 };

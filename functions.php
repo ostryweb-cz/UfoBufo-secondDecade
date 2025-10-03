@@ -46,7 +46,52 @@ function ufobufo_setup()
 add_action('wp_enqueue_scripts', 'ufobufo_load_scripts');
 function ufobufo_load_scripts()
 {
+    $version = wp_get_theme()->version;
+    
+    // jQuery from WordPress
     wp_enqueue_script('jquery');
+    
+    // Vendor libraries in order
+    wp_enqueue_script(
+        'swiper',
+        get_template_directory_uri() . '/js/vendor/swiper.min.js',
+        array(),
+        '12.0.2',
+        false
+    );
+    
+    wp_enqueue_script(
+        'gsap',
+        get_template_directory_uri() . '/js/vendor/gsap.min.js',
+        array(),
+        '3.13.0',
+        false
+    );
+    
+    wp_enqueue_script(
+        'izimodal',
+        get_template_directory_uri() . '/js/vendor/iziModal.min.js',
+        array('jquery'),
+        '1.6.1',
+        false
+    );
+    
+    wp_enqueue_script(
+        'basicscroll',
+        get_template_directory_uri() . '/js/vendor/basicscroll.min.js',
+        array(),
+        '3.0.4',
+        false
+    );
+    
+    // Theme JavaScript - depends on all vendor libraries
+    wp_enqueue_script(
+        'ufobufo-front',
+        get_template_directory_uri() . '/js/front.js',
+        array('jquery', 'swiper', 'gsap', 'izimodal', 'basicscroll'),
+        $version,
+        false
+    );
 }
 
 add_action('comment_form_before', 'ufobufo_enqueue_comment_reply_script');
