@@ -4,10 +4,10 @@
 UFO BUFO is a modern, optimized WordPress theme for the UFO BUFO psychedelic music and art festival. The theme features a professional build system, clean architecture, and is optimized for performance with conditional asset loading.
 
 ## Key Features
-- **Legacy JavaScript Architecture**: jQuery-based component system with webpack bundling
+- **Modular JavaScript Architecture**: jQuery-based component system with external libraries
 - **Professional Build System**: Separate development and distribution workflows
-- **Optimized Assets**: Single front.js bundle (148KB) built with webpack/babel
-- **External jQuery**: Uses WordPress-provided jQuery instead of bundling
+- **Highly Optimized**: Theme code only 39.4KB, all libraries external
+- **External Libraries**: All JS libraries loaded separately from /js/vendor/ (not bundled)
 - **Clean Distribution**: Production-ready builds exclude source files and dev tools
 - **SASS Architecture**: Component-based styling with BEM methodology
 - **Mobile Responsive**: Mobile-first design with adaptive quality
@@ -16,13 +16,18 @@ UFO BUFO is a modern, optimized WordPress theme for the UFO BUFO psychedelic mus
 ## Project Structure
 ```
 UfoBufo-secondDecade/
-├── js/                      # JavaScript files (legacy structure)
-│   ├── front.js            # Optimized bundle (148KB) - loaded in header
-│   ├── ostryweb.js         # Additional script (161B) - loaded in footer
+├── js/                      # JavaScript files
+│   ├── front.js            # Theme code bundle (39.4KB) - loaded via WordPress
+│   ├── ostryweb.js         # Additional script (137B) - loaded via WordPress
+│   ├── vendor/             # External libraries (loaded separately)
+│   │   ├── swiper.min.js   # Swiper 12.0.2 (150KB)
+│   │   ├── gsap.min.js     # GSAP 3.13.0 (68KB)
+│   │   ├── iziModal.min.js # iziModal 1.6.1 (25KB)
+│   │   └── basicscroll.min.js # BasicScroll 3.0.4 (10KB)
 │   └── src/                # JavaScript source files
 │       ├── app.js          # Main entry point
-│       ├── components/     # jQuery-based components (8 files)
-│       │   ├── fractal.js           # Homepage lens animation
+│       ├── components/     # jQuery-based components (7 files)
+│       │   ├── fractal.js           # Homepage lens animation (GSAP)
 │       │   ├── gallerySwiper.js     # Gallery carousel with Swiper
 │       │   ├── modal.js             # Modal with iziModal
 │       │   ├── move-items.js        # Lineup date organization
@@ -32,7 +37,7 @@ UfoBufo-secondDecade/
 │       │   ├── toggle-search.js     # Search form toggle
 │       │   └── trim-items.js        # Text manipulation
 │       └── vendor/
-│           └── iziModal.js  # iziModal library source
+│           └── iziModal.js  # iziModal library source (for reference)
 │
 ├── css/                     # Compiled CSS and SASS sources
 │   ├── sass/               # SASS source files (development)
@@ -75,17 +80,17 @@ UfoBufo-secondDecade/
 
 ### JavaScript Libraries
 - **jQuery 3.7.1** (via WordPress) - Core framework, loaded externally
-- **Swiper 12.0.2** - Gallery carousel (bundled)
-- **iziModal 1.6.1** - Image lightbox (bundled from vendor/)
-- **GSAP 3.13.0** - Homepage lens/fractal animations (bundled)
-- **BasicScroll 3.0.4** - Parallax effects (bundled)
+- **Swiper 12.0.2** - Gallery carousel with Navigation/Pagination modules
+- **iziModal 1.6.1** - Image lightbox (jQuery plugin)
+- **GSAP 3.13.0** - Homepage lens/fractal animations (v3.x API)
+- **BasicScroll 3.0.4** - Parallax effects (available for future use)
 
 **Library Loading Architecture:**
-- **jQuery**: External dependency - uses WordPress-provided jQuery (not bundled)
-- **Other libraries**: Bundled into front.js (148KB optimized)
-- Single pre-compiled bundle approach
-- Loaded via `<script>` tag in header.php
-- Webpack externals configuration prevents jQuery from being bundled
+- **All libraries external** - No libraries bundled in front.js
+- **Loaded via WordPress** - wp_enqueue_script() in functions.php
+- **Loading order**: jQuery → Swiper → GSAP → iziModal → BasicScroll → front.js
+- **front.js**: 39.4KB (theme code only, 81% reduction from 211KB)
+- **Total JS**: 293KB (all files separate for better caching)
 
 ### Removed Libraries (Oct 2025)
 - ~~VideoJS~~ - Not used (homepage uses YouTube iframe embed)
@@ -113,11 +118,7 @@ npm run build
 ```bash
 npm run dev          # Watch and rebuild automatically (webpack)
 npm run build        # Build production JS to /js/ using webpack
-npm run clean        # Protected - legacy JS files preserved
-
-# Alternative: Use Gulp
-gulp webpack         # Compile JS with webpack
-gulp watch           # Watch files and rebuild
+npm run build:dev    # Build development JS (human-readable)
 ```
 
 ### Distribution Commands
@@ -162,32 +163,33 @@ sass css/sass/front.sass css/front.min.css --style=compressed
 
 ## Asset Loading Strategy
 
-The theme uses simple script tag loading:
+The theme uses WordPress wp_enqueue_script() system:
 
 ### Main JavaScript Bundle
-- **front.js** (148KB) - Optimized bundle with components and libraries
-- Loaded in `<head>` via `<script>` tag in header.php
-- Contains: All components, Swiper, iziModal, GSAP, BasicScroll
-- Uses WordPress jQuery as external dependency (not bundled)
-- 98% size reduction from original 7.2MB bundle
+- **front.js** (39.4KB) - Optimized bundle with theme code only
+- Loaded via wp_enqueue_script() in functions.php
+- Contains: All components and theme logic
+- Uses WordPress jQuery as external dependency
+- 81% size reduction from bundled version
+
+### Vendor Libraries (External)
+All libraries loaded separately from /js/vendor/ via wp_enqueue_script():
+- **swiper.min.js** (150KB) - Swiper 12.0.2
+- **gsap.min.js** (68KB) - GSAP 3.13.0
+- **iziModal.min.js** (25KB) - iziModal 1.6.1 (jQuery plugin)
+- **basicscroll.min.js** (10KB) - BasicScroll 3.0.4
 
 ### Additional Scripts
-- **ostryweb.js** (161B) - Additional utility script
-- Loaded in footer via `<script>` tag in footer.php
+- **ostryweb.js** (137B) - Additional utility script
+- Loaded via wp_enqueue_script() in functions.php
 
-### Distribution Library Files
-During distribution build, external library files are copied to `dist/js/vendor/` for reference:
-- jquery.min.js (85KB) - jQuery 3.7.1
-- swiper.min.js (151KB) - Swiper 12.0.2
-- izimodal.min.js (26KB) - iziModal 1.6.1
-- gsap.min.js (71KB) - GSAP 3.13.0
-- basicscroll.min.js (10KB) - BasicScroll 3.0.4
-
-Additional CSS files in `dist/css/`:
-- swiper.min.css (14KB) - Swiper styles
-- izimodal.min.css (88KB) - iziModal styles
-
-Note: These are included for potential future optimization but currently not used (all bundled in front.js)
+### Loading Order
+1. jQuery (WordPress)
+2. Swiper
+3. GSAP
+4. iziModal
+5. BasicScroll
+6. front.js (theme code)
 
 ## Distribution Build
 
@@ -256,18 +258,19 @@ npm run dist:package
 
 ### JavaScript
 **Core Application:**
-- front.js: 148KB (optimized bundle with components and libraries)
-- ostryweb.js: 161B
-- jQuery: 85KB (loaded from WordPress, not bundled)
+- front.js: 39.4KB (optimized theme code only)
+- ostryweb.js: 137B
+- jQuery: ~85KB (loaded from WordPress, not bundled)
 
-**Bundled Libraries (inside front.js):**
-- swiper: 151KB (v12.0.2)
-- izimodal: 26KB (v1.6.1)
-- gsap: 71KB (v3.13.0)
-- basicscroll: 10KB (v3.0.4)
+**External Libraries (in /js/vendor/):**
+- swiper.min.js: 150KB (v12.0.2)
+- gsap.min.js: 68KB (v3.13.0)
+- iziModal.min.js: 25KB (v1.6.1)
+- basicscroll.min.js: 10KB (v3.0.4)
 
 **Total JS Loaded:**
-- All pages: ~233KB (front.js + WordPress jQuery + ostryweb.js)
+- All pages: ~293KB (all files separate for better caching)
+- front.js is 81% smaller (39.4KB vs 211KB bundled version)
 - 98% reduction from original 7.2MB bundle
 
 ### CSS
@@ -275,59 +278,49 @@ npm run dist:package
 - 2025.css: ~5KB
 
 ### Distribution Package
-- Total theme: ~25MB (mostly images)
-- PHP files: ~200KB
-- JavaScript: ~148KB (front.js optimized bundle)
-- CSS: ~155KB
-- Fonts: ~140KB
+- Total theme: ~22.5MB (mostly images)
+- PHP files: ~144KB
+- JavaScript: ~293KB (front.js + vendor libraries)
+- CSS: ~123KB
+- Fonts: ~141KB
 - Images: ~23MB
 
 ## Recent Changes (October 2025)
 
-### Bundle Optimization (October 3, 2025)
-- ✅ Removed unused video.js import from modal.js (homepage uses YouTube iframe)
-- ✅ Removed tooltipster component and imports (location.php tooltips commented out)
-- ✅ Configured webpack to use WordPress jQuery as external dependency
-- ✅ Updated webpack.config.modern.js to point to legacy JS structure
-- ✅ Rebuilt front.js bundle: **7.2MB → 148KB (98% reduction)**
-- ✅ Total JS loaded reduced from 7.2MB to ~233KB (including WordPress jQuery)
-- ✅ Updated documentation to reflect optimized architecture
+### Library Externalization (October 3, 2025)
+- ✅ **Externalized all JS libraries** - Moved from bundled to separate files in /js/vendor/
+- ✅ **Reduced front.js**: 211KB → 39.4KB (81% reduction)
+- ✅ **Total JS**: 293KB across 6 files (better caching)
+- ✅ **Libraries now external**:
+  - Swiper 12.0.2 (150KB)
+  - GSAP 3.13.0 (68KB)
+  - iziModal 1.6.1 (25KB)
+  - BasicScroll 3.0.4 (10KB)
 
-### Library Updates (October 3, 2025)
-- ✅ Updated iziModal from 1.6.0 to 1.6.1
-- ✅ Verified all other libraries are at latest versions:
-  - jQuery 3.7.1
-  - Swiper 12.0.2
-  - GSAP 3.13.0
-  - BasicScroll 3.0.4
-- ✅ Changed distribution build to place libraries in `js/vendor/` instead of `js/libs/`
-- ✅ Added jQuery to distribution vendor files
-- ✅ Added Swiper CSS to distribution build
+### JavaScript Fixes (October 3, 2025)
+- ✅ Fixed jQuery loading order in WordPress (wp_enqueue_script)
+- ✅ Fixed iziModal initialization check for missing elements
+- ✅ Updated GSAP to v3.x API (gsap.to, window.gsap)
+- ✅ Fixed Swiper gallery with Navigation and Pagination modules
+- ✅ Fixed GSAP parallax to only run on homepage
+- ✅ Removed all library imports (now loaded as globals)
 
-### JS Architecture Restoration
-- ✅ Restored legacy jQuery-based JS architecture from backup
-- ✅ Removed modern ES6 class-based architecture from /assets/js/
-- ✅ Restored jQuery-based components from backup
-- ✅ JS structure restored:
-  - /js/front.js - compiled bundle (now optimized to 148KB)
-  - /js/ostryweb.js - additional script
-  - /js/src/app.js - main entry point
-  - /js/src/components/ - 8 active component files
-  - /js/src/vendor/iziModal.js
-- ✅ Updated build configuration:
-  - webpack.config.js - old webpack config pointing to /js/src/app.js
-  - gulpfile.js - gulp tasks for build process
-- ✅ Updated PHP files:
-  - functions.php - removed webpack-assets.php include
-  - header.php - added front.js script tag
-  - footer.php - added ostryweb.js script tag
-- ✅ Updated dist build to copy legacy files
-- ✅ Distribution ready in /dist/ (now ~25MB after optimization)
+### UI/UX Improvements (October 3, 2025)
+- ✅ Updated Swiper button styles: white background default
+- ✅ Rotated prev button icon 180 degrees
+- ✅ Compiled SASS with updated styles
+- ✅ Updated functions.php to load libraries in correct order
 
-### Documentation Added
-- README.md - Development guide
-- DEPLOY.md - Deployment procedures
-- This WARP.md - Technical overview updated for legacy architecture
+### Build System Cleanup (October 3, 2025)
+- ✅ Simplified webpack configs (removed webpack.config.modern.js)
+- ✅ Renamed to webpack.config.js (main) and webpack.config.dist.js
+- ✅ Cleaned up package.json scripts
+- ✅ Updated bundlesize config
+- ✅ Removed unused documentation files
+
+### Documentation
+- ✅ Updated WARP.md to reflect current architecture
+- ✅ Removed old README.md, DEPLOY.md, FIXES_APPLIED.md, WEBPACK-ANALYSIS.md
 
 ## Known Issues
 - Location page area plan tooltips commented out (not in use)
@@ -349,14 +342,6 @@ GNU General Public License v3.0
 
 ---
 
-## Additional Documentation
-
-For detailed documentation on specific parts of the theme:
-
-- **README.md** - Complete development and build guide
-- **DEPLOY.md** - Deployment procedures and troubleshooting
-- **css/WARP.md** - SASS architecture and styling guidelines
-- **inc/WARP.md** - PHP functionality and WordPress integration
 
 ## Quick Reference
 
