@@ -1,0 +1,135 @@
+// ===============================================================
+// Boxes
+// ===============================================================
+
+
+.more
+    color: $color-blue
+    font-size: 12px
+    font-weight: 500
+    position: relative
+    padding: 0
+    line-height: 20px
+    display: block
+    i
+        font-size: 14px
+        position: relative
+        top: 1px
+        margin-right: 5px
+    &:hover
+        color: darken($color-blue, 5%)
+
+.row
+    display: flex
+    flex-wrap: wrap
+    justify-content: space-between
+    margin-bottom: 0
+    & + .ta--center
+        margin-top: 30px
+
+    .box
+        width: calc(33.333% - 40px)
+        background: $color-white
+        position: relative
+        display: block
+        margin: 0 0 60px
+        overflow: hidden
+        box-shadow: 0 5px 20px 0 rgba(14, 20, 60, 0.9)
+        transition: all 300ms ease-in-out
+        .Img
+            display: block
+            width: 100%
+            height: auto
+            overflow: hidden !important
+            position: relative
+            background: $bluedark-color
+            &:after
+                width: calc(100% - 10px)
+                height: calc(100% - 10px)
+                position: absolute
+                left: 5px
+                top: 5px
+                box-shadow: inset 0 0 0 1px  rgba(255, 255, 255, .25)
+                content: ""
+                transition: all 300ms ease-in-out
+            img
+                max-width: 100%
+                min-width: 100%
+                transform: scale(1.05)
+                transition: all 400ms ease-in-out
+                height: auto
+
+        .Content
+            padding: 20px
+            display: block
+            background: transparent
+            h3
+                width: 100%
+                color: $color-black
+                transition: all 300ms ease-in-out
+                letter-spacing: 0.02em
+                a
+                    color: $color-black
+
+            p
+                font-size: 14px
+                line-height: 20px
+                color: $color-black
+                margin-bottom: 50px
+
+            .date
+                font-size: 12px
+                color: $color-gray-light
+                margin: 10px 0 20px 0
+                display: block
+                font-weight: 500
+                letter-spacing: 0.05em
+            .more
+                position: absolute
+                bottom: 30px
+
+        &:hover
+            box-shadow: 0 5px 20px 0 rgba(0, 0, 0, 0.7)
+            .Img
+                &:after
+                    width: calc(100% - 40px)
+                    height: calc(100% - 40px)
+                    left: 20px
+                    top: 20px
+                    box-shadow: inset 0 0 0 1px  rgba(255, 255, 255, .0)
+                img
+                    transform: scale(1.1)
+    &--4
+        .box
+            width: calc(25% - 20px)
+
+
+
+@media screen and (max-width: 1100px)
+    .row
+        .box
+            width: calc( 33.333% - 25px)
+            margin: 0 0 30px
+        &--4
+            .box
+                width: calc(25% - 20px)
+
+
+
+@media screen and (max-width: $breakpoint--tablet)
+    .row
+        .box
+            width: calc( 33.333% - 10px)
+            margin: 0 0 15px
+        &--4
+            .box
+                width: calc(50% - 20px)
+
+
+@media screen and (max-width: $breakpoint--mobile)
+    .row
+        .box
+            width: 100%
+        &--4
+            .box
+                width: calc(50% - 5px)

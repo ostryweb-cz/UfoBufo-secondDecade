@@ -1,0 +1,146 @@
+// =======================================================
+// Typography
+// =======================================================
+@font-face
+    font-family: 'ufobufo'
+    src:  url('../fonts/ufobufo-font/ufobufo.eot?gyglrd')
+    src:  url('../fonts/ufobufo-font/ufobufo.eot?gyglrd#iefix') format('embedded-opentype'), url('../fonts/ufobufo-font/ufobufo.woff?gyglrd') format('woff'), url('../fonts/ufobufo-font/ufobufo.woff2?gyglrd') format('woff2'), url('../fonts/ufobufo-font/ufobufo.svg?gyglrd#icomoon') format('svg')
+    font-weight: 100
+    font-style: normal
+
+
+@import url('https://fonts.googleapis.com/css?family=Montserrat:400,500,700')
+
+
+
+
+a
+    text-decoration: underline
+    //color:  $bluedark-color
+    &:hover
+        text-decoration: none
+a[x-apple-data-detectors]
+    color: inherit !important
+    text-decoration: none !important
+    font-size: inherit !important
+    font-family: inherit !important
+    font-weight: inherit !important
+    line-height: inherit !important
+
+
+h1, h2, h3
+    color: $orange-color
+
+
+h1,
+.h1
+    font-weight: normal
+    $map: (600px: 22px, 850px: 30px,  992px: 50px,)
+    @include poly-fluid-sizing('font-size', $map)
+    $map: (600px: 20px, 992px: 50px,)
+    @include poly-fluid-sizing('margin-bottom', $map)
+    $map: (600px: 40px, 992px: 60px,)
+    @include poly-fluid-sizing('line-height', $map)
+    font-family: $font--ufobufo
+    //background: linear-gradient(45deg, $color-blue 0%, $color-white 100%)
+    //-webkit-background-clip: text
+    //-webkit-text-fill-color: transparent
+    //background-clip: text
+    display: inline-block
+
+h2
+    $map: (600px: 22px, 992px: 30px,)
+    @include poly-fluid-sizing('font-size', $map)
+    $map: (600px: 20px, 992px: 30px,)
+    @include poly-fluid-sizing('margin-bottom', $map)
+    font-weight: normal
+    font-family: $font--ufobufo
+
+h3
+    $map: (600px: 18px, 992px: 20px,)
+    @include poly-fluid-sizing('font-size', $map)
+    margin: 0 0 20px 0
+    font-weight: normal
+    font-family: $font--ufobufo
+    .galleryItem__length
+        font-family: $font--roboto
+        font-size: 16px
+        color: $color-white
+        margin-left: 10px
+
+h4
+    font-size: 14px
+    font-weight: 600
+
+h5, .h5
+    font-size: 16px
+    font-weight: bold
+
+h6, .h6
+    font-size: 15px
+    font-weight: bold
+
+
+hr
+    height: 1px
+    background: rgba(0, 0, 0, 0.1)
+    margin: 0
+    padding: 0
+    border: 0
+
+a
+    text-decoration: none
+    transition: all 0.3s
+    img
+        margin: 0
+        padding: 0
+    &:hover
+        text-decoration: none
+
+p
+    $map: (600px: 14px, 992px: 16px,)
+    @include poly-fluid-sizing('font-size', $map)
+    $map: (600px: 20px, 992px: 30px,)
+    @include poly-fluid-sizing('line-height', $map)
+    $map: (600px: 20px, 992px: 24px,)
+    @include poly-fluid-sizing('margin-bottom', $map)
+    font-weight: 400
+    color: $color-white
+    a
+        color: $color-blue
+        &:hover
+            text-decoration: underline
+        &.button
+            &:hover
+                text-decoration: none
+    &.lead
+        color: $color-white
+        $map: (600px: 18px, 992px: 20px,)
+        @include poly-fluid-sizing('font-size', $map)
+        $map: (600px: 22px, 992px: 30px,)
+        @include poly-fluid-sizing('line-height', $map)
+        $map: (600px: 22px, 992px: 30px,)
+        @include poly-fluid-sizing('margin-bottom', $map)
+        font-weight: 500
+        strong
+            font-weight: 700
+
+
+p, ul li
+    font-weight: normal
+
+
+.label
+    color: $color-white
+
+.page-header
+    p
+        text-align: center
+
+
+@media only screen and (max-width: $breakpoint--mobile)
+    h1
+        font-size: 35px
+        margin-bottom: 20px
+    br
+        display: none

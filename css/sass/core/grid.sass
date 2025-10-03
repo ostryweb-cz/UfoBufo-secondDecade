@@ -1,0 +1,157 @@
+// =======================================================
+// Grid
+// =======================================================
+
+.entry-meta,
+.entry-footer,
+.post-edit-link
+    display: none
+
+
+
+
+
+
+html,
+body
+    -webkit-font-smoothing: antialiased
+    -moz-osx-font-smoothing: grayscale
+    text-shadow: 1px 1px 1px rgba(0,0,0,0.005)
+    text-rendering: optimizeLegibility !important
+    padding: 0
+    margin: 0
+    font-family: $font--roboto
+    vertical-align: baseline
+    color: $color-black
+    position: relative
+    background: $bluedark-color url("../img/pattern.gif")
+    &.bodyfixed,
+    &.bodyfixedmodal
+        overflow: hidden
+
+
+
+
+.site
+    overflow: hidden
+    margin-top: 60px
+    position: relative
+
+
+
+
+
+.block
+    &__inner
+        position: relative
+        max-width: $page-width
+        margin: 0 auto
+        padding: 50px 20px
+        &.page-header
+            padding: 50px 20px 0
+            text-align: center
+            h1
+                display: inline-block
+            .lead
+                margin-bottom: 0
+
+
+
+
+
+.img-responsive
+    min-width: 100%
+    max-width: 100%
+    height: auto
+
+
+
+
+
+.grid
+    display: flex
+    width: 100%
+    flex-wrap: wrap
+    &--wrap
+        flex-wrap: wrap
+    &--spaceBetween
+        justify-content: space-between
+    // Aligns
+    &--verticalTop
+        align-items: flex-start
+    &--verticalBottom
+        align-items: flex-end
+    &--verticalCenter
+        align-items: center
+    &--horizontalCenter
+        justify-content: center
+    &--horizontalLeft
+        justify-content: flex-start
+    &--horizontalRight
+        justify-content: flex-end
+    &--spaceBeetween
+        justify-content: space-between
+
+    // Grid element
+    .span
+        display: block
+        padding: 0
+        position: relative
+        box-sizing: border-box
+        &--top
+            align-self: flex-start
+        &--bottom
+            align-self: flex-end
+        &--center
+            align-self: center
+        &--100
+            width: 100%
+        &--90
+            width: 90%
+        &--80
+            width: 80%
+        &--70
+            width: 70%
+        &--60
+            width: 60%
+        &--50
+            width: 50%
+        &--40
+            width: 40%
+        &--30
+            width: 30%
+        &--35
+            width: 35%
+        &--20
+            width: 20%
+
+.box
+    width: 33.333%
+    background: white
+    img
+        max-width: 100%
+
+
+@media screen and (max-width: $breakpoint--desktop)
+    .site
+        margin-top: 120px
+
+
+
+
+@media screen and (max-width: $breakpoint--mobile)
+    .site
+        margin-top: 50px
+    .block
+        &__inner
+            padding: 30px 15px
+            &.page-header
+                padding: 30px 15px 0
+    .grid
+        flex-wrap: wrap
+        .span
+            &--90, &--80, &--70, &--60, &--50, &--40, &--30, &--35, &--20
+                width: 100%
+
+
+

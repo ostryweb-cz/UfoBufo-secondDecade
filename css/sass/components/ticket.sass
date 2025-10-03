@@ -1,0 +1,109 @@
+// ===============================================================
+// Ticket table
+// ===============================================================
+
+
+.ticketRow
+    display: flex
+    flex-wrap: wrap
+    align-items: stretch
+    background: $bluedark-color
+    box-shadow: 0 5px 10px 0 rgba(14, 20, 60, 0.9)
+    border-radius: 5px
+    margin-bottom: 10px
+    & > div
+        display: flex
+        padding:  30px
+        line-height: 40px
+        box-sizing: border-box
+
+    &_Wave
+        width: 25%
+        background: $color-white
+        display: flex
+        border-radius: 5px 0 0 5px
+        line-height: 20px !important
+        h3
+            color: $color-black
+            margin-bottom: 0
+            span
+                color: $color-gray-light
+                font-family: $font--roboto
+                font-size: 15px
+                font-weight: normal
+                display: block
+                line-height: 20px
+    &_Days
+        color: $color-white
+        text-transform: uppercase
+        background: rgba(255, 255, 255, 0.05)
+        min-width: 115px
+        p
+            margin-bottom: 0
+            line-height: 40px
+            font-size: 15px
+    &_Price
+        color: $color-white
+        justify-content: flex-end
+        background: rgba(255, 255, 255, 0.025)
+        min-width: 115px
+        p
+            text-align: right
+            line-height: 40px
+            margin-bottom: 0
+            position: relative
+            font-weight: 700
+            span
+                top: 0
+                right: -10px
+                color: $bluelight-color
+                font-weight: normal
+    &_State
+        color: $color-white
+        position: relative
+        justify-content: center
+        flex-grow: 1
+        background: rgba(255, 255, 255, 0.05)
+        border-radius: 0 5px 5px 0
+
+    &--inactive
+        opacity: .8
+        cursor: not-allowed
+        transform: scale(0.95)
+        .ticketRow_Wave
+            h3
+                color: $color-gray-light
+        .ticketRow_Days,
+        .ticketRow_Price,
+            p
+                opacity: .5
+        .ticketRow_State
+            opacity: .5
+
+.legend
+    color: $color-white
+    font-size: 14px
+    display: block
+    br
+        display: block
+
+
+
+@media only screen and (max-width: $breakpoint--tablet)
+    .ticketRow
+        & > div
+            padding:  15px
+        &_Wave
+            width: 40%
+            border-radius: 5px 0 0 0
+        &_Days,
+        &_Price
+            min-width: 0
+            width: 30%
+            p
+                white-space: nowrap
+                font-size: 14px
+                br
+                    display: block
+        &_State
+            width: 100%

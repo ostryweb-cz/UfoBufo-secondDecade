@@ -1,0 +1,66 @@
+// ===============================================================
+// Buttons
+// ===============================================================
+
+.button
+    padding: 0 25px
+    text-align: center
+    height: 40px
+    line-height: 40px
+    font-size: 15px
+    display: inline-block
+    border-radius: 30px
+    color: $color-white
+    transition: all 200ms ease-in-out
+    background: $color-blue
+    font-weight: 500
+    position: relative
+    outline: none
+    border: 0
+    &:hover
+        background: darken($color-blue, 3%)
+        color: $color-white
+    i
+        margin-left: 10px
+        font-size: 12px
+    .hidden
+        display: none
+    &--small
+        height: 26px
+        line-height: 26px
+        font-size: 13px
+        padding: 0 15px
+        font-family: $font--roboto
+
+input
+    &:hover,
+    &:focus
+        -webkit-appearance: none
+
+
+
+.nav-previous,
+.nav-next
+    a
+        padding: 0 25px
+        text-align: center
+        height: 36px
+        line-height: 36px
+        font-size: 15px
+        display: inline-block
+        border-radius: 30px
+        color: $color-blue
+        transition: all 200ms ease-in-out
+        background: transparent
+        font-weight: 500
+        position: relative
+        outline: none
+        border: 2px solid $color-blue
+
+        &:hover
+            background: $color-blue
+            color: $color-white
+        i
+            margin-left: 10px
+            font-size: 12px
+

@@ -1,0 +1,56 @@
+# WordPress Theme Distribution Build
+/dist/
+
+# Dependencies
+/node_modules/
+
+# Build outputs (keep legacy front.js and ostryweb.js)
+/js/*.js.map
+/js/*.LICENSE.txt
+!/js/front.js
+!/js/ostryweb.js
+!/js/.gitkeep
+
+# Compiled CSS
+/css/front.min.css
+/css/front.min.css.map
+/css/*.css
+/css/*.css.map
+!/css/sass/
+
+# Development
+.DS_Store
+*.log
+npm-debug.log*
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Package locks (optional - remove if you want to commit them)
+# package-lock.json
+# yarn.lock
+
+# Backup files
+*.bak
+*~
+*.backup
+
+# Distribution preparation
+/___BKP/

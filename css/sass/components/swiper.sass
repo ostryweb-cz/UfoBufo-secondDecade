@@ -1,0 +1,233 @@
+// ===============================================================
+// Swiper
+// ===============================================================
+
+//
+.swiper
+    &-container
+        height: 90vh
+        position: relative
+        .action-button
+            position: absolute
+            top: 50%
+            margin-top: -32px
+            z-index: 100
+            &-prev
+                left: 30px
+            &-next
+                right: 30px
+    &-slide
+        text-align: center
+        font-size: 18px
+        position: relative
+        background-size: contain
+        background-position: center center
+        background-repeat: no-repeat
+        display: flex
+        justify-content: center
+        align-items: center
+        p
+            position: absolute
+            left: 50%
+            transform: translateX(-50%)
+            bottom: 3px
+            width: 100%
+            text-align: center
+            font-size: 14px
+            color: $color-white
+            max-width: $page-width
+
+            margin: 0 auto
+            padding: 7px 0
+            opacity: 0
+        &-active
+            p
+                opacity: 1
+    &-button
+        &-prev,
+        &-next
+            width: 40px
+            height: 40px
+            border-radius: 50px
+            border: 2px solid $color-white
+            display: inline-block
+            line-height: 43px
+            text-align: center
+            font-size: 20px
+            margin: 0 0 0 0
+            left: auto
+            right: auto
+            background: transparent
+            position: absolute
+            top: 50%
+            transform: translateY(-50%)
+            transition: all 200ms ease-in-out
+            i
+                color: $color-white
+            &:hover
+                background: $color-white
+                i
+                    color: $bluedark-color
+
+        &-prev
+            left: 30px
+        &-next
+            right: 30px
+    &-pagination
+        &-fraction
+            top: 0
+            bottom: auto
+            right: auto
+            left: 50%
+            transform: translateX(-50%)
+            border: 0
+            border-radius: 0
+            width: auto
+            color: $color-white
+            font-size: 12px
+            padding: 5px
+            background: $bluedark-color
+//
+//.swiper
+//  &-wrapper
+//      min-height: 100%
+//  &-container
+//      width: 100%
+//      height: 100%
+//      margin: 0 auto;
+//      position: relative
+//      overflow: hidden
+//      list-style: none
+//      padding: 0
+//      z-index: 1
+//      .action-button
+//          position: absolute
+//          top: 50%
+//          margin-top: -32px
+//          z-index: 100
+//          &-prev
+//              left: 30px
+//          &-next
+//              right: 30px
+//  &-slide
+//
+//      text-align: center
+//      font-size: 18px
+//      position: relative
+//      background-size: cover
+//      background-position: center center
+//      background-repeat: no-repeat
+//      display: flex
+//      justify-content: center
+//      align-items: center
+//
+//      img
+//          transition: all 200ms ease-in-out
+//          max-width: $page-width
+//
+//      p
+//          position: absolute
+//          left: 50%
+//          transform: translateX(-50%)
+//          bottom: 3px
+//          width: 100%
+//          text-align: center
+//          font-size: 14px
+//          color: $color-white
+//          max-width: $page-width
+//          background: linear-gradient(to top, rgba(0, 0, 0, .5) 0%, rgba(0, 0, 0, 0) 100%)
+//          margin: 0 auto
+//          padding: 7px 0
+//          opacity: 0
+//      &-active
+//          p
+//              opacity: 1
+//  &-button
+//      &-prev,
+//      &-next
+//          width: 40px
+//          height: 40px
+//          border-radius: 50px
+//          border: 2px solid $color-white
+//          display: inline-block
+//          line-height: 43px
+//          text-align: center
+//          font-size: 20px
+//          margin: 0 0 0 0
+//          left: auto
+//          right: auto
+//          background: transparent
+//          position: absolute
+//          top: 50%
+//          transform: translateY(-50%)
+//          transition: all 200ms ease-in-out
+//          i
+//              color: $color-white
+//          &:hover
+//              background: $color-white
+//              i
+//                  color: $bluedark-color
+//
+//      &-prev
+//          left: 30px
+//      &-next
+//          right: 30px
+//  &-pagination
+//      &-fraction
+//          top: 10px
+//          bottom: auto
+//          right: auto
+//          left: 50%
+//          transform: translateX(-50%)
+//          border: 0
+//          border-radius: 50px
+//          width: 50px
+//          color: $color-white
+//          font-size: 12px
+//          padding: 5px
+//          background: $bluedark-color
+//
+
+
+
+
+//
+//.swiper-container
+//  width: 100%
+//  height: 300px
+//  margin-left: auto
+//  margin-right: auto
+//
+//
+//
+//.gallery-top
+//  height: 80%
+//  width: 100%
+//
+//
+//.gallery-thumbs
+//  height: 20%
+//  max-height: 150px !important
+//  overflow: hidden
+//  box-sizing: border-box
+//  padding: 0
+//  .swiper-container
+//      height: 60px
+//  .swiper-slide
+//      width: 25%
+//      height: 68px
+//      opacity: 0.4
+//      min-height: 0
+//      filter: grayscale(100%)
+//      min-width: 0
+//      img
+//          max-width: 100%
+//  .swiper-slide-thumb-active
+//      opacity: 1
+//      filter: none
+
+@media screen and (max-width: $page-width)
+    .swiper
+        &-slide
+            img
+                max-width: 100%

@@ -1,0 +1,115 @@
+// ===============================================================
+// Search
+// ===============================================================
+
+textarea::placeholder,
+input::placeholder
+    color: $color-gray
+    opacity: 1
+
+
+.screen-reader-text
+    display: none
+.search-form
+    display: flex
+    height: 40px
+    max-width: 50%
+    margin: 0 auto
+    position: relative
+    input
+        all: unset
+        box-sizing: content-box
+        height: 40px
+        line-height: 40px
+        padding: 0 110px 0 20px !important
+        width: 100%
+        background: rgba(255, 255, 255, .05)
+        border-radius: 30px
+        color: $color-white
+        font-size: 14px
+        transition: all 200ms ease-in-out
+        &:focus
+            box-shadow: 0 0 2px 0 $color-blue
+            background: rgba(255, 255, 255, 1)
+            color: $color-black
+    .button
+        height: 40px
+        line-height: 40px
+        position: absolute
+        right: 0
+        width: auto
+        background: transparent
+        padding: 0 20px !important
+        text-align: center
+        border-radius: 0 30px 30px 0
+        font-weight: 600
+        border: 0
+        color: $color-gray-light
+        cursor: pointer
+        opacity: .7
+        i
+            font-size: 18px
+        &--active
+            color: $color-blue
+            opacity: 1
+
+.search-results
+    .header
+        color: $color-white
+        margin-bottom: 10%
+        .lead
+            font-weight: normal
+            margin-bottom: 0
+            $map: (600px: 22px, 992px: 30px,)
+            @include poly-fluid-sizing('font-size', $map)
+
+
+    .search-result__Item
+        max-width: 75%
+        margin: 0 0 5%
+        transition: all 200ms ease-in-out
+        h3
+            margin-bottom: 10px
+            font-family: $font--roboto
+            font-weight: 500
+            a
+                color: $orange-color
+                .search-highlight
+                    font-weight: 700
+        p
+            margin-bottom: 10px
+            .search-highlight
+                background: rgba(0, 174, 239, .5)
+                font-weight: bold
+        &:hover
+            h3
+                a
+                    text-decoration: underline
+
+    .navigation
+        display: flex
+        justify-content: space-between
+
+
+
+@media screen and (max-width: $breakpoint--mobile)
+    textarea::placeholder,
+    input::placeholder
+        color: $color-white
+        opacity: .5
+    .search-results
+        .search-result__Item
+            max-width: 100%
+    .topHeaderSearch--hidden
+        .search-form
+            opacity: 1
+    .search-form
+        max-width: none
+        opacity: 1
+        width: auto
+        padding: 2% 10% 85px
+        input
+            font-size: 16px
+
+        .button
+            right: 10%

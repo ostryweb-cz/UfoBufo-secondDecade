@@ -1,0 +1,231 @@
+// ===============================================================
+// Header
+// ===============================================================
+
+
+
+
+
+
+.axis
+    background-color: rgba(255,255,255, 0.2)
+    position: absolute
+    z-index: 100
+
+
+.planet
+    background-size: cover
+    left: 77%
+    position: absolute
+    top: 84%
+
+
+
+
+
+#lens1
+    margin: -315px 0 0 -800px
+    width: 1600px
+    height: 660px
+    background-image: url('../img/lens2.png')
+    z-index: 20
+    top: 59.5%
+    left: 50%
+
+#lens2
+    margin: -215px 0 0 -330px
+    width: 660px
+    height: 430px
+    background-image: url('../img/lens1.png')
+    z-index: 10
+    left: 25%
+    position: absolute
+    top: 78%
+
+
+
+.scene
+    position: absolute
+    transform: translateY(var(--translateY)) translateX(-50%)
+    will-change: transform
+    left: 50%
+    bottom: 0
+
+
+.topparalax
+    position: relative
+    height: calc(100vh - 60px)
+    display: block
+    z-index: 0
+
+    &__Inner
+        width: 50%
+        z-index: 50
+        left: 50%
+        top: 50%
+        transform: translate(-50%, -50%)
+        display: block
+        height: 100%
+        position: relative
+        h1
+            display: none
+            span
+                display: none
+        img
+            max-width: 100%
+            min-width: 750px
+            display: inline-block
+            top: 50%
+            left: 50%
+            position: absolute
+            transform: translate(-50%, -50%)
+            z-index: 10
+            width: 600px
+
+
+        h2
+            text-align: center
+            left: 50%
+            position: absolute
+            transform: translateX(-50%)
+            top: 80px
+            width: 100%
+            white-space: nowrap
+            color: $bluedark-color
+            $map: (600px: 18px, 992px: 24px,)
+            @include poly-fluid-sizing('font-size', $map)
+            $map: (600px: 18px, 992px: 24px,)
+            @include poly-fluid-sizing('line-height', $map)
+        p
+            text-align: center
+            color: $color-white
+            font-family: $font--ufobufo
+            $map: (600px: 18px, 992px: 20px,)
+            @include poly-fluid-sizing('font-size', $map)
+            $map: (600px: 18px, 992px: 20px,)
+            @include poly-fluid-sizing('line-height', $map)
+            position: absolute
+            bottom: 50px
+            left: 50%
+            transform: translate(-50%, -50%)
+            width: 100%
+            margin-bottom: 0
+            .button
+                margin-bottom: 20px
+                font-family: $font--roboto
+
+
+    &_layer
+        width: 100%
+        height: calc(100vh - 60px)
+        bottom: 0
+        position: absolute
+        background-size: cover !important
+        &--0
+            background: url(../img/parallax0.jpg) center 60px no-repeat fixed
+            z-index: 0
+        &--1
+            background: url(../img/parallax1.png) center bottom no-repeat
+            z-index: 1
+        &--2
+            background: url(../img/parallax2.png) center bottom no-repeat
+            z-index: 2
+        &--3
+            background: url(../img/parallax3-n.png) center bottom no-repeat
+            z-index: 3
+        &--4
+            background: url(../img/parallax4.png) center bottom no-repeat
+            z-index: 4
+        &--5
+            background: url(../img/parallax5.png) center bottom no-repeat
+            z-index: 5
+        &--6
+            background: url(../img/parallax8-n.png) center bottom no-repeat
+            z-index: 6
+
+
+
+
+.newsblock
+    position: relative
+    z-index: 1
+    background: linear-gradient(to top, rgba(14, 20, 60, 0) 0%, rgba(14, 20, 60, 1) 50%, rgba(14, 20, 60, 1) 100%)
+    .block__inner
+        padding: 50px 20px
+        p
+            margin-bottom: 0
+        .button
+            z-index: 10
+
+
+
+.home
+    .te
+        background: none
+.te
+    background: url("../img/test4.png") center -50px repeat-x
+    background-size: 2560px
+
+@media screen and (max-width: $breakpoint--desktop)
+    .topparalax
+        height: calc(100vh - 120px)
+        &_layer
+            height: calc(100vh - 120px)
+
+
+
+@media screen and (max-width: $page-width)
+    .topparalax
+        &__Inner
+            width: 100%
+            h2
+                white-space: normal
+            img
+                min-width: 0
+    #planet-1,
+    #planet-2,
+    #star
+        display: none
+
+
+
+@media screen and (max-width: $breakpoint--mobile)
+    .topparalax
+        height: calc(100vh - 50px)
+        &_layer
+            height: calc(100vh - 50px)
+        &__Inner
+            h2
+                top: 30px
+
+            p
+                bottom: 20px
+
+            h2,
+            p
+                width: 80%
+                font-size: 9px
+                line-height: 9px
+                span
+                    display: block
+        &_layer
+            background-size: cover
+            &--0
+                background: url(../img/parallax0-600.jpg) center 50px no-repeat fixed
+            &--1
+                background: url(../img/parallax1-600.png) center bottom no-repeat
+
+            &--2
+                background: url(../img/parallax2-600.png) center bottom no-repeat
+
+            &--3
+                background: url(../img/parallax3-n-600.png) center bottom no-repeat
+
+            &--4
+                background: url(../img/parallax4-600.png) center bottom no-repeat
+
+            &--5
+                background: url(../img/parallax5-600.png) center bottom no-repeat
+
+            &--6
+                background: url(../img/parallax8-n-600.png) center bottom no-repeat
