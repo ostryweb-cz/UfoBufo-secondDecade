@@ -127,7 +127,7 @@ function ufobufo_customize_register( $wp_customize ) {
 	) );
 
 	$wp_customize->add_control( 'color_scheme', array(
-		'label'    => __( 'Base Color Scheme', 'ufobufo' ),
+		'label'    => __( 'Základní barevné schéma', 'ufobufo' ),
 		'section'  => 'colors',
 		'type'     => 'select',
 		'choices'  => ufobufo_get_color_scheme_choices(),
@@ -142,7 +142,7 @@ function ufobufo_customize_register( $wp_customize ) {
 	) );
 
 	$wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, 'page_background_color', array(
-		'label'       => __( 'Page Background Color', 'ufobufo' ),
+		'label'       => __( 'Barva pozadí stránky', 'ufobufo' ),
 		'section'     => 'colors',
 	) ) );
 
@@ -157,7 +157,7 @@ function ufobufo_customize_register( $wp_customize ) {
 	) );
 
 	$wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, 'link_color', array(
-		'label'       => __( 'Link Color', 'ufobufo' ),
+		'label'       => __( 'Barva odkazů', 'ufobufo' ),
 		'section'     => 'colors',
 	) ) );
 
@@ -169,7 +169,7 @@ function ufobufo_customize_register( $wp_customize ) {
 	) );
 
 	$wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, 'main_text_color', array(
-		'label'       => __( 'Main Text Color', 'ufobufo' ),
+		'label'       => __( 'Barva hlavního textu', 'ufobufo' ),
 		'section'     => 'colors',
 	) ) );
 
@@ -181,40 +181,444 @@ function ufobufo_customize_register( $wp_customize ) {
 	) );
 
 	$wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, 'secondary_text_color', array(
-		'label'       => __( 'Secondary Text Color', 'ufobufo' ),
+		'label'       => __( 'Barva sekundárního textu', 'ufobufo' ),
 		'section'     => 'colors',
 	) ) );
 
-	// Add Festival Visibility section
-	$wp_customize->add_section( 'festival_visibility', array(
-		'title'    => __( 'Festival Visibility', 'ufobufo' ),
+	// Add Festival Settings section
+	$wp_customize->add_section( 'festival_settings', array(
+		'title'    => __( 'Nastavení festivalu', 'ufobufo' ),
 		'priority' => 30,
 	) );
 
-	// Festival visibility start date
-	$wp_customize->add_setting( 'festival_visibility_start', array(
-		'default'           => date('Y') . '-07-01', // July 1st of current year
+	// Festival Phase Management
+	$wp_customize->add_setting( 'festival_phase', array(
+		'default'           => 'phase_4',
+		'sanitize_callback' => 'ufobufo_sanitize_festival_phase',
+	) );
+
+	$wp_customize->add_control( 'festival_phase', array(
+		'label'       => __( 'Fáze festivalu', 'ufobufo' ),
+		'description' => __( 'Určuje, jaký obsah se na webu zobrazuje v různých fázích příprav festivalu.', 'ufobufo' ),
+		'section'     => 'festival_settings',
+		'type'        => 'select',
+		'choices'     => array(
+			'phase_1' => __( 'Fáze 1: Po festivalu (zobrazit předchozí ročník)', 'ufobufo' ),
+			'phase_2' => __( 'Fáze 2: Oznámené nové datum (aktualizují se pouze data)', 'ufobufo' ),
+			'phase_3' => __( 'Fáze 3: První potvrzení interpreti (skrýt starý lineup, zobrazit text „Další vystupující později“)', 'ufobufo' ),
+			'phase_4' => __( 'Fáze 4: Kompletní lineup (skrýt text „Další vystupující později“)', 'ufobufo' ),
+		),
+	) );
+
+	// Festival event start date (used for homepage date range)
+	$wp_customize->add_setting( 'festival_event_start_date', array(
+		'default'           => '',
 		'sanitize_callback' => 'ufobufo_sanitize_date',
 	) );
 
-	$wp_customize->add_control( 'festival_visibility_start', array(
-		'label'       => __( 'Festival Text Start Date', 'ufobufo' ),
-		'description' => __( 'Date when "(UFO BUFO Festival 2025)" text should start showing', 'ufobufo' ),
-		'section'     => 'festival_visibility',
+	$wp_customize->add_control( 'festival_event_start_date', array(
+		'label'       => __( 'Datum začátku festivalu', 'ufobufo' ),
+		'description' => __( 'První den festivalu (používá se pro text s rozsahem dat).', 'ufobufo' ),
+		'section'     => 'festival_settings',
 		'type'        => 'date',
 	) );
 
-	// Festival visibility end date
-	$wp_customize->add_setting( 'festival_visibility_end', array(
-		'default'           => (date('Y') + 1) . '-03-31', // March 31st of next year
+	// Festival event end date (used for homepage date range)
+	$wp_customize->add_setting( 'festival_event_end_date', array(
+		'default'           => '',
 		'sanitize_callback' => 'ufobufo_sanitize_date',
 	) );
 
-	$wp_customize->add_control( 'festival_visibility_end', array(
-		'label'       => __( 'Festival Text End Date', 'ufobufo' ),
-		'description' => __( 'Date when "(UFO BUFO Festival 2025)" text should stop showing', 'ufobufo' ),
-		'section'     => 'festival_visibility',
+	$wp_customize->add_control( 'festival_event_end_date', array(
+		'label'       => __( 'Datum konce festivalu', 'ufobufo' ),
+		'description' => __( 'Poslední den festivalu (používá se pro text s rozsahem dat).', 'ufobufo' ),
+		'section'     => 'festival_settings',
 		'type'        => 'date',
+	) );
+
+	// Default lineup year for the Program page
+	$wp_customize->add_setting( 'festival_lineup_years', array(
+		'default'           => date( 'Y' ),
+		'sanitize_callback' => 'sanitize_text_field',
+	) );
+
+	$wp_customize->add_control( 'festival_lineup_years', array(
+		'label'       => __( 'Program zobrazuje rok', 'ufobufo' ),
+		'description' => __( 'Rok, jehož lineup se standardně zobrazuje na stránce Program, např. „2025“.', 'ufobufo' ),
+		'section'     => 'festival_settings',
+		'type'        => 'text',
+	) );
+
+	// Homepage headline texts (moved from ACF)
+
+	// Welcome text
+	$wp_customize->add_setting( 'festival_home_welcome_text_cs', array(
+		'default'           => '',
+		'sanitize_callback' => 'sanitize_textarea_field',
+	) );
+	$wp_customize->add_setting( 'festival_home_welcome_text_en', array(
+		'default'           => '',
+		'sanitize_callback' => 'sanitize_textarea_field',
+	) );
+
+	$wp_customize->add_control( 'festival_home_welcome_text_cs', array(
+		'label'       => __( 'Homepage – uvítací text (CS)', 'ufobufo' ),
+		'description' => __( 'Krátká uvítací věta nad hlavním festivalovým textem (česky).', 'ufobufo' ),
+		'section'     => 'festival_settings',
+		'type'        => 'textarea',
+	) );
+	$wp_customize->add_control( 'festival_home_welcome_text_en', array(
+		'label'       => __( 'Homepage – uvítací text (EN)', 'ufobufo' ),
+		'description' => __( 'Krátká uvítací věta nad hlavním festivalovým textem (anglicky).', 'ufobufo' ),
+		'section'     => 'festival_settings',
+		'type'        => 'textarea',
+	) );
+
+	// Main festival text
+	$wp_customize->add_setting( 'festival_home_text_cs', array(
+		'default'           => '',
+		'sanitize_callback' => 'sanitize_textarea_field',
+	) );
+	$wp_customize->add_setting( 'festival_home_text_en', array(
+		'default'           => '',
+		'sanitize_callback' => 'sanitize_textarea_field',
+	) );
+
+	$wp_customize->add_control( 'festival_home_text_cs', array(
+		'label'       => __( 'Homepage – hlavní festivalový text (CS)', 'ufobufo' ),
+		'description' => __( 'Hlavní popisný text pod uvítacím řádkem (česky).', 'ufobufo' ),
+		'section'     => 'festival_settings',
+		'type'        => 'textarea',
+	) );
+	$wp_customize->add_control( 'festival_home_text_en', array(
+		'label'       => __( 'Homepage – hlavní festivalový text (EN)', 'ufobufo' ),
+		'description' => __( 'Hlavní popisný text pod uvítacím řádkem (anglicky).', 'ufobufo' ),
+		'section'     => 'festival_settings',
+		'type'        => 'textarea',
+	) );
+
+	// Festival name
+	$wp_customize->add_setting( 'festival_home_name_cs', array(
+		'default'           => '',
+		'sanitize_callback' => 'sanitize_text_field',
+	) );
+	$wp_customize->add_setting( 'festival_home_name_en', array(
+		'default'           => '',
+		'sanitize_callback' => 'sanitize_text_field',
+	) );
+
+	$wp_customize->add_control( 'festival_home_name_cs', array(
+		'label'       => __( 'Homepage – název festivalu (CS)', 'ufobufo' ),
+		'description' => __( 'Název festivalu zobrazený v hlavním nadpisu H1 (česky).', 'ufobufo' ),
+		'section'     => 'festival_settings',
+		'type'        => 'text',
+	) );
+	$wp_customize->add_control( 'festival_home_name_en', array(
+		'label'       => __( 'Homepage – název festivalu (EN)', 'ufobufo' ),
+		'description' => __( 'Název festivalu zobrazený v hlavním nadpisu H1 (anglicky).', 'ufobufo' ),
+		'section'     => 'festival_settings',
+		'type'        => 'text',
+	) );
+
+	// Festival location
+	$wp_customize->add_setting( 'festival_home_location_cs', array(
+		'default'           => '',
+		'sanitize_callback' => 'sanitize_text_field',
+	) );
+	$wp_customize->add_setting( 'festival_home_location_en', array(
+		'default'           => '',
+		'sanitize_callback' => 'sanitize_text_field',
+	) );
+
+	$wp_customize->add_control( 'festival_home_location_cs', array(
+		'label'       => __( 'Homepage – lokalita (CS)', 'ufobufo' ),
+		'description' => __( 'Text s místem konání festivalu pod datem (česky).', 'ufobufo' ),
+		'section'     => 'festival_settings',
+		'type'        => 'text',
+	) );
+	$wp_customize->add_control( 'festival_home_location_en', array(
+		'label'       => __( 'Homepage – lokalita (EN)', 'ufobufo' ),
+		'description' => __( 'Text s místem konání festivalu pod datem (anglicky).', 'ufobufo' ),
+		'section'     => 'festival_settings',
+		'type'        => 'text',
+	) );
+
+	// Tickets & Pricing section
+	$wp_customize->add_section( 'tickets_settings', array(
+		'title'    => __( 'Vstupenky a ceny', 'ufobufo' ),
+		'priority' => 35,
+	) );
+
+	// Tickets phase (independent of festival_phase)
+	$wp_customize->add_setting( 'tickets_phase', array(
+		'default'           => 'phase_2',
+		'sanitize_callback' => 'ufobufo_sanitize_tickets_phase',
+	) );
+
+	$wp_customize->add_control( 'tickets_phase', array(
+		'label'       => __( 'Fáze prodeje vstupenek', 'ufobufo' ),
+		'description' => __( 'Řídí viditelnost a texty na stránce Vstupenky.', 'ufobufo' ),
+		'section'     => 'tickets_settings',
+		'type'        => 'select',
+		'choices'     => array(
+			'phase_1' => __( 'Fáze 1: Vstupenky zatím nejsou v prodeji', 'ufobufo' ),
+			'phase_2' => __( 'Fáze 2: Předprodej – tabulka vln', 'ufobufo' ),
+			'phase_3' => __( 'Fáze 3: Předprodej vyprodán – prodej jen na místě', 'ufobufo' ),
+		),
+	) );
+
+	// Intro messages per phase & language
+	// Phase 1 – tickets not available yet
+	$wp_customize->add_setting( 'tickets_intro_phase_1_cs', array(
+		'default'           => __( 'Vstupenky na UFO BUFO budou k dispozici později. Sledujte náš web a sociální sítě pro více informací.', 'ufobufo' ),
+		'sanitize_callback' => 'wp_kses_post',
+	) );
+	$wp_customize->add_setting( 'tickets_intro_phase_1_en', array(
+		'default'           => __( 'Tickets for UFO BUFO will be available later. Follow our website and social media for more information.', 'ufobufo' ),
+		'sanitize_callback' => 'wp_kses_post',
+	) );
+
+	$wp_customize->add_control( 'tickets_intro_phase_1_cs', array(
+		'label'       => __( 'Fáze 1 – úvodní text (CS)', 'ufobufo' ),
+		'description' => __( 'Zobrazuje se na stránce Vstupenky, když vstupenky ještě nejsou v prodeji (česky).', 'ufobufo' ),
+		'section'     => 'tickets_settings',
+		'type'        => 'textarea',
+	) );
+	$wp_customize->add_control( 'tickets_intro_phase_1_en', array(
+		'label'       => __( 'Fáze 1 – úvodní text (EN)', 'ufobufo' ),
+		'description' => __( 'Zobrazuje se na stránce Vstupenky, když vstupenky ještě nejsou v prodeji (anglicky).', 'ufobufo' ),
+		'section'     => 'tickets_settings',
+		'type'        => 'textarea',
+	) );
+
+	// Phase 2 – presale waves with BookTickets info
+	$wp_customize->add_setting( 'tickets_intro_phase_2_cs', array(
+		'default'           => __( 'Jediným oficiálním zdrojem vstupenek je služba <a href="https://www.book-tickets.cz/ufobufo2026" target="_blank">Book Tickets</a>. Prosíme to mít na vědomí, pokud narazíte na nabídku z jiného zdroje. <br><b>Na festivalu zaplatíte jen v hotovosti.</b> Žádný signál = žádná platba kartou. EUR přijímáme, ale vracíme v Kč. Nejbližší bankomat je ve Vítkově (8km).', 'ufobufo' ),
+		'sanitize_callback' => 'wp_kses_post',
+	) );
+	$wp_customize->add_setting( 'tickets_intro_phase_2_en', array(
+		'default'           => __( 'The only official seller of tickets is <a href="https://www.book-tickets.cz/ufobufo2026" target="_blank">Book Tickets</a> service. Please keep that in mind if you get offer from any other source. <br><b>Festival is cash only!</b> No signal = no card payment. We accept EUR but return in CZK. The nearest ATM is in Vítkov (8km).', 'ufobufo' ),
+		'sanitize_callback' => 'wp_kses_post',
+	) );
+
+	$wp_customize->add_control( 'tickets_intro_phase_2_cs', array(
+		'label'       => __( 'Fáze 2 – úvodní text (CS)', 'ufobufo' ),
+		'description' => __( 'Zobrazuje se na stránce Vstupenky během předprodeje (česky).', 'ufobufo' ),
+		'section'     => 'tickets_settings',
+		'type'        => 'textarea',
+	) );
+	$wp_customize->add_control( 'tickets_intro_phase_2_en', array(
+		'label'       => __( 'Fáze 2 – úvodní text (EN)', 'ufobufo' ),
+		'description' => __( 'Zobrazuje se na stránce Vstupenky během předprodeje (anglicky).', 'ufobufo' ),
+		'section'     => 'tickets_settings',
+		'type'        => 'textarea',
+	) );
+
+	// Phase 3 – presale sold out, gate only
+	$wp_customize->add_setting( 'tickets_intro_phase_3_cs', array(
+		'default'           => __( 'Předprodej vstupenek je vyprodán. Omezený počet vstupenek bude k dispozici pouze na bráně (jen hotově).', 'ufobufo' ),
+		'sanitize_callback' => 'wp_kses_post',
+	) );
+	$wp_customize->add_setting( 'tickets_intro_phase_3_en', array(
+		'default'           => __( 'Presale tickets are sold out. A limited amount of tickets will be available only at the festival gate (cash only).', 'ufobufo' ),
+		'sanitize_callback' => 'wp_kses_post',
+	) );
+
+	$wp_customize->add_control( 'tickets_intro_phase_3_cs', array(
+		'label'       => __( 'Fáze 3 – úvodní text (CS)', 'ufobufo' ),
+		'description' => __( 'Zobrazuje se na stránce Vstupenky, když je předprodej vyprodán a prodej je jen na místě (česky).', 'ufobufo' ),
+		'section'     => 'tickets_settings',
+		'type'        => 'textarea',
+	) );
+	$wp_customize->add_control( 'tickets_intro_phase_3_en', array(
+		'label'       => __( 'Fáze 3 – úvodní text (EN)', 'ufobufo' ),
+		'description' => __( 'Zobrazuje se na stránce Vstupenky, když je předprodej vyprodán a prodej je jen na místě (anglicky).', 'ufobufo' ),
+		'section'     => 'tickets_settings',
+		'type'        => 'textarea',
+	) );
+
+	// Fixed presale waves – Early Bird, 1st wave, 2nd wave, Christmas gift, 3rd wave, final wave
+	$waves = array(
+		'early_bird' => array(
+			'label' => __( 'Early Bird', 'ufobufo' ),
+			'default_state' => 'sold_out',
+			'default_czk_full' => '2000',
+			'default_eur_full' => '83',
+		),
+		'wave1' => array(
+			'label' => __( '1st wave', 'ufobufo' ),
+			'default_state' => 'sold_out',
+			'default_czk_full' => '2400',
+			'default_czk_short' => '2200',
+			'default_eur_full' => '103',
+			'default_eur_short' => '94',
+		),
+		'wave2' => array(
+			'label' => __( '2nd wave', 'ufobufo' ),
+			'default_state' => 'sold_out',
+			'default_czk_full' => '2800',
+			'default_czk_short' => '2600',
+			'default_eur_full' => '120',
+			'default_eur_short' => '111',
+		),
+		'christmas' => array(
+			'label' => __( 'Christmas gift ticket', 'ufobufo' ),
+			'default_state' => 'on_sale',
+			'default_czk_full' => '3000',
+			'default_eur_full' => '128',
+		),
+		'wave3' => array(
+			'label' => __( '3rd wave', 'ufobufo' ),
+			'default_state' => 'upcoming',
+			'default_czk_full' => '3300',
+			'default_czk_short' => '3100',
+			'default_eur_full' => '141',
+			'default_eur_short' => '133',
+		),
+		'final' => array(
+			'label' => __( 'Final wave', 'ufobufo' ),
+			'default_state' => 'upcoming',
+		),
+	);
+
+	foreach ( $waves as $wave_key => $wave_config ) {
+		$wave_setting_prefix = 'tickets_' . $wave_key;
+
+		// Enable / disable whole row
+		$wp_customize->add_setting( $wave_setting_prefix . '_enabled', array(
+			'default'           => true,
+			'sanitize_callback' => 'ufobufo_sanitize_checkbox',
+		) );
+		$wp_customize->add_control( $wave_setting_prefix . '_enabled', array(
+			'label'   => sprintf( __( '%s: zobrazit řádek', 'ufobufo' ), $wave_config['label'] ),
+			'section' => 'tickets_settings',
+			'type'    => 'checkbox',
+		) );
+
+		// Wave state
+		$wp_customize->add_setting( $wave_setting_prefix . '_state', array(
+			'default'           => isset( $wave_config['default_state'] ) ? $wave_config['default_state'] : 'upcoming',
+			'sanitize_callback' => 'ufobufo_sanitize_ticket_state',
+		) );
+		$wp_customize->add_control( $wave_setting_prefix . '_state', array(
+			'label'       => sprintf( __( '%s: stav', 'ufobufo' ), $wave_config['label'] ),
+			'description' => __( '„On sale“ zobrazí tlačítko Koupit, pokud je vyplněná URL; „Sold out“ řádek vysiví; „Upcoming“ ponechá řádek neaktivní.', 'ufobufo' ),
+			'section'     => 'tickets_settings',
+			'type'        => 'select',
+			'choices'     => array(
+				'upcoming' => __( 'Připravujeme / zatím nedostupné', 'ufobufo' ),
+				'on_sale'  => __( 'V prodeji', 'ufobufo' ),
+				'sold_out' => __( 'Vyprodáno', 'ufobufo' ),
+			),
+		) );
+
+		// Prices – CZK full / short
+		$wp_customize->add_setting( $wave_setting_prefix . '_price_czk_full', array(
+			'default'           => isset( $wave_config['default_czk_full'] ) ? $wave_config['default_czk_full'] : '',
+			'sanitize_callback' => 'sanitize_text_field',
+		) );
+		$wp_customize->add_setting( $wave_setting_prefix . '_price_czk_short', array(
+			'default'           => isset( $wave_config['default_czk_short'] ) ? $wave_config['default_czk_short'] : '',
+			'sanitize_callback' => 'sanitize_text_field',
+		) );
+
+		$wp_customize->add_control( $wave_setting_prefix . '_price_czk_full', array(
+			'label'       => sprintf( __( '%s: cena CZK (celý festival)', 'ufobufo' ), $wave_config['label'] ),
+			'section'     => 'tickets_settings',
+			'type'        => 'text',
+		) );
+		$wp_customize->add_control( $wave_setting_prefix . '_price_czk_short', array(
+			'label'       => sprintf( __( '%s: cena CZK (zkrácená vstupenka)', 'ufobufo' ), $wave_config['label'] ),
+			'section'     => 'tickets_settings',
+			'type'        => 'text',
+		) );
+
+		// Prices – EUR full / short (shared between CS and EN mutations)
+		$wp_customize->add_setting( $wave_setting_prefix . '_price_eur_full', array(
+			'default'           => isset( $wave_config['default_eur_full'] ) ? $wave_config['default_eur_full'] : '',
+			'sanitize_callback' => 'sanitize_text_field',
+		) );
+		$wp_customize->add_setting( $wave_setting_prefix . '_price_eur_short', array(
+			'default'           => isset( $wave_config['default_eur_short'] ) ? $wave_config['default_eur_short'] : '',
+			'sanitize_callback' => 'sanitize_text_field',
+		) );
+
+		$wp_customize->add_control( $wave_setting_prefix . '_price_eur_full', array(
+			'label'       => sprintf( __( '%s: cena EUR (celý festival)', 'ufobufo' ), $wave_config['label'] ),
+			'section'     => 'tickets_settings',
+			'type'        => 'text',
+		) );
+		$wp_customize->add_control( $wave_setting_prefix . '_price_eur_short', array(
+			'label'       => sprintf( __( '%s: cena EUR (zkrácená vstupenka)', 'ufobufo' ), $wave_config['label'] ),
+			'section'     => 'tickets_settings',
+			'type'        => 'text',
+		) );
+
+		// Optional Buy button URLs per language
+		$wp_customize->add_setting( $wave_setting_prefix . '_button_url_cs', array(
+			'default'           => ( 'christmas' === $wave_key ) ? 'https://www.book-tickets.cz/ufobufo2026' : '',
+			'sanitize_callback' => 'esc_url_raw',
+		) );
+		$wp_customize->add_setting( $wave_setting_prefix . '_button_url_en', array(
+			'default'           => ( 'christmas' === $wave_key ) ? 'https://www.book-tickets.cz/index.php?page=bookticket&event=159&lang=en&currency=EUR' : '',
+			'sanitize_callback' => 'esc_url_raw',
+		) );
+
+		$wp_customize->add_control( $wave_setting_prefix . '_button_url_cs', array(
+			'label'       => sprintf( __( '%s: BookTickets URL (CS)', 'ufobufo' ), $wave_config['label'] ),
+			'section'     => 'tickets_settings',
+			'type'        => 'url',
+		) );
+		$wp_customize->add_control( $wave_setting_prefix . '_button_url_en', array(
+			'label'       => sprintf( __( '%s: BookTickets URL (EN)', 'ufobufo' ), $wave_config['label'] ),
+			'section'     => 'tickets_settings',
+			'type'        => 'url',
+		) );
+	}
+
+	// Camping & parking legend text (per language)
+	$wp_customize->add_setting( 'tickets_parking_text_cs', array(
+		'default'           => '',
+		'sanitize_callback' => 'wp_kses_post',
+	) );
+	$wp_customize->add_setting( 'tickets_parking_text_en', array(
+		'default'           => '',
+		'sanitize_callback' => 'wp_kses_post',
+	) );
+
+	$wp_customize->add_control( 'tickets_parking_text_cs', array(
+		'label'       => __( 'Text k parkování (CS)', 'ufobufo' ),
+		'description' => __( 'Doplňkový text k legendě parkování, povolené je základní HTML (česky).', 'ufobufo' ),
+		'section'     => 'tickets_settings',
+		'type'        => 'textarea',
+	) );
+	$wp_customize->add_control( 'tickets_parking_text_en', array(
+		'label'       => __( 'Text k parkování (EN)', 'ufobufo' ),
+		'description' => __( 'Doplňkový text k legendě parkování, povolené je základní HTML (anglicky).', 'ufobufo' ),
+		'section'     => 'tickets_settings',
+		'type'        => 'textarea',
+	) );
+
+	$wp_customize->add_setting( 'tickets_camping_text_cs', array(
+		'default'           => __( 'Ceny ujasníme později, nebudou zásadně odlišné od předchozích let.', 'ufobufo' ),
+		'sanitize_callback' => 'wp_kses_post',
+	) );
+	$wp_customize->add_setting( 'tickets_camping_text_en', array(
+		'default'           => __( 'We will clarify the prices later, they will be similar to previous years.', 'ufobufo' ),
+		'sanitize_callback' => 'wp_kses_post',
+	) );
+
+	$wp_customize->add_control( 'tickets_camping_text_cs', array(
+		'label'       => __( 'Text ke stanovánÍ (CS)', 'ufobufo' ),
+		'description' => __( 'Text pod řádkem „STANOVÁNÍ V KEMPU“ / „TENT CAMPING“ (česky).', 'ufobufo' ),
+		'section'     => 'tickets_settings',
+		'type'        => 'textarea',
+	) );
+	$wp_customize->add_control( 'tickets_camping_text_en', array(
+		'label'       => __( 'Text ke stanovánÍ (EN)', 'ufobufo' ),
+		'description' => __( 'Text pod řádkem „STANOVÁNÍ V KEMPU“ / „TENT CAMPING“ (anglicky).', 'ufobufo' ),
+		'section'     => 'tickets_settings',
+		'type'        => 'textarea',
 	) );
 }
 add_action( 'customize_register', 'ufobufo_customize_register', 11 );
@@ -445,28 +849,9 @@ function ufobufo_color_scheme_css() {
 }
 add_action( 'wp_enqueue_scripts', 'ufobufo_color_scheme_css' );
 
-/**
- * Binds the JS listener to make Customizer color_scheme control.
- *
- * Passes color scheme data as colorScheme global.
- *
- * @since Twenty Sixteen 1.0
- */
-function ufobufo_customize_control_js() {
-	wp_enqueue_script( 'color-scheme-control', get_template_directory_uri() . '/js/color-scheme-control.js', array( 'customize-controls', 'iris', 'underscore', 'wp-util' ), '20160816', true );
-	wp_localize_script( 'color-scheme-control', 'colorScheme', ufobufo_get_color_schemes() );
-}
-add_action( 'customize_controls_enqueue_scripts', 'ufobufo_customize_control_js' );
-
-/**
- * Binds JS handlers to make the Customizer preview reload changes asynchronously.
- *
- * @since Twenty Sixteen 1.0
- */
-function ufobufo_customize_preview_js() {
-	wp_enqueue_script( 'ufobufo-customize-preview', get_template_directory_uri() . '/js/customize-preview.js', array( 'customize-preview' ), '20160816', true );
-}
-add_action( 'customize_preview_init', 'ufobufo_customize_preview_js' );
+// Legacy Customizer JS (color scheme controls + preview) removed.
+// We no longer load non-existent js/color-scheme-control.js or js/customize-preview.js
+// to avoid 404s in the Customizer.
 
 /**
  * Returns CSS for the color schemes.
@@ -1245,4 +1630,70 @@ function ufobufo_sanitize_date( $date ) {
 	}
 
 	return $date;
+}
+
+/**
+ * Sanitizes festival phase selection.
+ *
+ * @since UFO BUFO 1.0
+ *
+ * @param string $phase Phase input value.
+ * @return string Valid phase key or default 'phase_4'.
+ */
+function ufobufo_sanitize_festival_phase( $phase ) {
+	$valid_phases = array( 'phase_1', 'phase_2', 'phase_3', 'phase_4' );
+
+	if ( ! in_array( $phase, $valid_phases, true ) ) {
+		return 'phase_4';
+	}
+
+	return $phase;
+}
+
+/**
+ * Sanitizes tickets phase selection for the Tickets page.
+ *
+ * @since UFO BUFO 1.0
+ *
+ * @param string $phase Phase input value.
+ * @return string Valid tickets phase key or default 'phase_2'.
+ */
+function ufobufo_sanitize_tickets_phase( $phase ) {
+	$valid_phases = array( 'phase_1', 'phase_2', 'phase_3' );
+
+	if ( ! in_array( $phase, $valid_phases, true ) ) {
+		return 'phase_2';
+	}
+
+	return $phase;
+}
+
+/**
+ * Sanitizes ticket wave state.
+ *
+ * @since UFO BUFO 1.0
+ *
+ * @param string $state Ticket state.
+ * @return string Valid state key or default 'upcoming'.
+ */
+function ufobufo_sanitize_ticket_state( $state ) {
+	$valid_states = array( 'upcoming', 'on_sale', 'sold_out' );
+
+	if ( ! in_array( $state, $valid_states, true ) ) {
+		return 'upcoming';
+	}
+
+	return $state;
+}
+
+/**
+ * Sanitizes checkbox values for Customizer settings.
+ *
+ * @since UFO BUFO 1.0
+ *
+ * @param mixed $checked Checkbox value.
+ * @return bool
+ */
+function ufobufo_sanitize_checkbox( $checked ) {
+	return ( isset( $checked ) && true == $checked );
 }

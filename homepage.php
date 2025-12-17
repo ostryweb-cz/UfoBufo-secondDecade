@@ -8,22 +8,19 @@
 
 <div class="topparalax">
     <div class="topparalax__Inner" >
-            <?php if(pll_current_language() == 'en'): ?>
-               	<h2><span><?php the_field('eventwelcometext_en'); ?></span><br><?php the_field('eventtext_en'); ?></h2>
-        		<h1><span><?php the_field('eventname_en'); ?></span></h1>
-            <?php elseif(pll_current_language() == 'cs'): ?>
-                <h2><span><?php the_field('eventwelcometext'); ?></span><br><?php the_field('eventtext'); ?></h2>
-        		<h1><span><?php the_field('eventname'); ?></span></h1>
-            <?php endif; ?>
+            <?php
+                $home_event_welcome  = ufobufo_get_home_event_welcome_text();
+                $home_event_text     = ufobufo_get_home_event_text();
+                $home_event_name     = ufobufo_get_home_event_name();
+            ?>
+            <h2><span><?php echo esc_html( $home_event_welcome ); ?></span><br><?php echo esc_html( $home_event_text ); ?></h2>
+        	<h1><span><?php echo esc_html( $home_event_name ); ?></span></h1>
          </p>
         
         <img src="<?php bloginfo('template_url'); ?>/img/ufobufo-logo-temp.png" alt="UFOBUFO"/>
-        <p><span><?php the_field('eventdate'); ?></span><br>
-        <?php if(pll_current_language() == 'en'): ?>
-               	<?php the_field('eventlocation_en'); ?>
-            <?php elseif(pll_current_language() == 'cs'): ?>
-                <?php the_field('eventlocation'); ?>
-            <?php endif; ?>
+        <?php $home_event_location = ufobufo_get_home_event_location(); ?>
+        <p><span><?php echo esc_html( ufobufo_get_event_date_range_text() ); ?></span><br>
+            <?php echo esc_html( $home_event_location ); ?>
 			</p>
     </div>
 

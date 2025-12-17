@@ -28,7 +28,7 @@ var staging = environments.make("staging");
 gulp.task("styles", function () {
 	gulp.src("css/sass/front.sass")
 	// Make styles
-		.pipe(sourcemaps.init())
+		//.pipe(sourcemaps.init())
 		.pipe(sass({
 			outputStyle: "compressed",
 			precision: 10
@@ -38,7 +38,7 @@ gulp.task("styles", function () {
 			browsers: ['last 2 versions'],
 			cascade: false
 		}))
-		.pipe(sourcemaps.write("/"))
+		//.pipe(sourcemaps.write("/"))
 		.pipe(gulp.dest("css"))
 		.pipe(gulpFilter("**/*.css"))
 		.pipe(livereload())

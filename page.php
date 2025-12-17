@@ -1,6 +1,24 @@
 <?php get_header(); ?>
 <?php ufobufo_body_header(); ?>
 
+<?php
+// Polylang may route the shop URL as a translated Page (wp-singular page-*)
+// instead of a product archive. In that case, render the WooCommerce shop
+// loop explicitly so products show up.
+if ( function_exists( 'is_shop' ) && is_shop() ) :
+?>
+    <div class="block">
+        <div class="block__inner">
+            <div class="detail__Inner woocommerce woocommerce-shop-page">
+                <?php woocommerce_content(); ?>
+            </div>
+        </div>
+    </div>
+
+    <?php get_footer(); ?>
+    <?php return; ?>
+<?php endif; ?>
+
 <div class="block">
     <div class="block__inner">
         <div class="detail__Inner news-detail">

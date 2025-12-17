@@ -3,6 +3,185 @@
 // Load customizer functionality
 require get_template_directory() . '/inc/customizer.php';
 
+/**
+ * Polylang + WooCommerce
+ *
+ * Goal: do NOT translate products, but make them visible in both language mutations.
+ *
+ * - We remove WooCommerce post types/taxonomies from Polylang language filtering.
+ * - We also fix the language switcher so it does not fall back to the front page
+ *   on product/shop pages when products are intentionally "untranslated".
+ */
+if ( function_exists( 'pll_current_language' ) ) {
+    // Make products shared between languages (no translations needed).
+    add_filter( 'pll_get_post_types', function( $post_types, $hide ) {
+        if ( isset( $post_types['product'] ) ) {
+            unset( $post_types['product'] );
+        }
+        return $post_types;
+    }, 10, 2 );
+
+    /**
+     * Shared products should be viewable under any language URL.
+     *
+     * Polylang (and WordPress) may try to redirect "wrong language" URLs to the
+     * canonical one. Example: /cs/merch/slug/ -> /merch/slug/.
+     *
+     * Disable these canonical redirects for WooCommerce contexts so the page can
+     * render with Czech UI (menus/strings) while showing the same product.
+     */
+    add_filter( 'redirect_canonical', function( $redirect_url ) {
+        if ( function_exists( 'is_shop' ) && is_shop() ) {
+            return false;
+        }
+
+        if ( is_singular( 'product' ) || is_post_type_archive( 'product' ) ) {
+            return false;
+        }
+
+        if ( is_tax( array( 'product_cat', 'product_tag' ) ) ) {
+            return false;
+        }
+
+        return $redirect_url;
+    }, 10 );
+
+    // Polylang canonical redirect (same idea as redirect_canonical but inside Polylang).
+    // Return false to prevent redirection.
+    add_filter( 'pll_check_canonical_url', function( $redirect ) {
+        if ( function_exists( 'is_shop' ) && is_shop() ) {
+            return false;
+        }
+
+        if ( is_singular( 'product' ) || is_post_type_archive( 'product' ) ) {
+            return false;
+        }
+
+        if ( is_tax( array( 'product_cat', 'product_tag' ) ) ) {
+            return false;
+        }
+
+        return $redirect;
+    }, 10 );
+
+    // Make WooCommerce taxonomies shared too.
+    add_filter( 'pll_get_taxonomies', function( $taxonomies, $is_settings ) {
+        foreach ( array( 'product_cat', 'product_tag', 'product_shipping_class' ) as $tax ) {
+            if ( isset( $taxonomies[ $tax ] ) ) {
+                unset( $taxonomies[ $tax ] );
+            }
+        }
+
+        // Product attribute taxonomies are dynamic and always prefixed with "pa_".
+        foreach ( $taxonomies as $key => $tax ) {
+            $name = is_string( $tax ) ? $tax : (string) $key;
+            if ( strpos( $name, 'pa_' ) === 0 ) {
+                unset( $taxonomies[ $key ] );
+            }
+        }
+
+        return $taxonomies;
+    }, 10, 2 );
+
+    // Keep language switcher on the same product/shop URL even when there is no translation.
+    add_filter( 'pll_translation_url', function( $url, $lang ) {
+        if ( null !== $url ) {
+            return $url;
+        }
+
+        $is_product_context = false;
+
+        if ( function_exists( 'is_product' ) && is_product() ) {
+            $is_product_context = true;
+        } elseif ( function_exists( 'is_shop' ) && is_shop() ) {
+            $is_product_context = true;
+        } elseif ( is_post_type_archive( 'product' ) ) {
+            $is_product_context = true;
+        } elseif ( is_singular( 'product' ) ) {
+            $is_product_context = true;
+        } elseif ( is_tax( array( 'product_cat', 'product_tag' ) ) ) {
+            $is_product_context = true;
+        }
+
+        if ( ! $is_product_context ) {
+            return $url;
+        }
+
+        $request_uri = isset( $_SERVER['REQUEST_URI'] ) ? (string) $_SERVER['REQUEST_URI'] : '';
+        if ( $request_uri === '' ) {
+            return $url;
+        }
+
+        $current_lang = pll_current_language();
+        $current_home = pll_home_url( $current_lang );
+        $target_home  = pll_home_url( $lang );
+
+        $current_path = (string) wp_parse_url( $current_home, PHP_URL_PATH );
+
+        // Strip current language path prefix from the request URI to get a relative path.
+        $relative = $request_uri;
+        if ( $current_path !== '' && strpos( $relative, $current_path ) === 0 ) {
+            $relative = '/' . ltrim( substr( $relative, strlen( $current_path ) ), '/' );
+        }
+
+        // Build target URL.
+        $base = rtrim( $target_home, '/' );
+        $path = '/' . ltrim( $relative, '/' );
+
+        return $base . $path;
+    }, 10, 2 );
+
+    /**
+     * Ensure WooCommerce product queries are not filtered by Polylang language.
+     *
+     * This is required for the "shared products" approach where products are not
+     * translated but should appear in all languages.
+     */
+    add_action( 'woocommerce_product_query', function( $q ) {
+        if ( ! $q instanceof WP_Query ) {
+            return;
+        }
+
+        // Polylang filters WP_Query by language via SQL clause filters.
+        // We keep products shared/untranslated, so bypass those filters.
+        $q->set( 'suppress_filters', true );
+
+        // Defensive: clear the Polylang query var if present.
+        $q->set( 'lang', '' );
+    } );
+
+    /**
+     * Also bypass language filtering for the main query on WooCommerce contexts.
+     *
+     * This covers cases where the shop is routed as a translated Page
+     * (/cs/shop/ -> page.php) but WooCommerce still runs a main product query.
+     */
+    add_action( 'pre_get_posts', function( $q ) {
+        if ( is_admin() || ! $q instanceof WP_Query || ! $q->is_main_query() ) {
+            return;
+        }
+
+        $is_wc_context = false;
+
+        if ( function_exists( 'is_shop' ) && is_shop() ) {
+            $is_wc_context = true;
+        } elseif ( $q->is_singular( 'product' ) ) {
+            $is_wc_context = true;
+        } elseif ( $q->is_post_type_archive( 'product' ) ) {
+            $is_wc_context = true;
+        } elseif ( $q->is_tax( array( 'product_cat', 'product_tag' ) ) ) {
+            $is_wc_context = true;
+        }
+
+        if ( ! $is_wc_context ) {
+            return;
+        }
+
+        $q->set( 'suppress_filters', true );
+        $q->set( 'lang', '' );
+    }, 0 );
+}
+
 add_action('after_setup_theme', 'ufobufo_setup');
 function ufobufo_setup()
 {
@@ -10,6 +189,12 @@ function ufobufo_setup()
     add_theme_support('title-tag');
     add_theme_support('automatic-feed-links');
     add_theme_support('post-thumbnails');
+
+    // WooCommerce
+    add_theme_support('woocommerce');
+    add_theme_support('wc-product-gallery-zoom');
+    add_theme_support('wc-product-gallery-lightbox');
+    add_theme_support('wc-product-gallery-slider');
     
     // Add HTML5 support for modern semantic markup
     add_theme_support('html5', array(
@@ -92,6 +277,26 @@ function ufobufo_load_scripts()
         $version,
         false
     );
+}
+
+/**
+ * WooCommerce shop loop UI cleanup
+ * - Remove "Showing the single result" (result count)
+ * - Remove "Default sorting" dropdown (catalog ordering)
+ */
+add_action( 'wp', 'ufobufo_woocommerce_shop_loop_cleanup' );
+function ufobufo_woocommerce_shop_loop_cleanup() {
+    if ( ! function_exists( 'is_shop' ) ) {
+        return;
+    }
+
+    $is_shop_context = is_shop() || is_post_type_archive( 'product' ) || is_tax( array( 'product_cat', 'product_tag' ) );
+    if ( ! $is_shop_context ) {
+        return;
+    }
+
+    remove_action( 'woocommerce_before_shop_loop', 'woocommerce_result_count', 20 );
+    remove_action( 'woocommerce_before_shop_loop', 'woocommerce_catalog_ordering', 30 );
 }
 
 add_action('comment_form_before', 'ufobufo_enqueue_comment_reply_script');
@@ -741,33 +946,51 @@ function ufobufo_body_header() {
 }
 
 /**
- * Check if the festival text should be displayed based on date range settings.
+ * Check if the festival text should be displayed based on the current festival phase.
+ *
+ * Phase logic:
+ * - Phase 1: show festival text
+ * - Phase 2: show festival text
+ * - Phase 3: hide festival text (show "More artists" message instead)
+ * - Phase 4: hide festival text
  *
  * @since UFO BUFO 1.0
  *
  * @return bool True if festival text should be displayed, false otherwise.
  */
 function ufobufo_should_show_festival_text() {
-    // Get the date range settings from theme customizer
-    $start_date = get_theme_mod( 'festival_visibility_start', date('Y') . '-07-01' );
-    $end_date = get_theme_mod( 'festival_visibility_end', (date('Y') + 1) . '-03-31' );
-    
-    // Get current date
-    $current_date = date('Y-m-d');
-    
-    // If no dates are set, don't show
-    if ( empty( $start_date ) || empty( $end_date ) ) {
-        return false;
-    }
-    
-    // Handle year wrap-around (e.g., July 2025 to March 2026)
-    if ( $start_date <= $end_date ) {
-        // Same year range (start and end in same year)
-        return ( $current_date >= $start_date && $current_date <= $end_date );
-    } else {
-        // Year wrap-around (start in one year, end in next year)
-        return ( $current_date >= $start_date || $current_date <= $end_date );
-    }
+    $phase = ufobufo_get_festival_phase();
+
+    return in_array( $phase, array( 'phase_1', 'phase_2' ), true );
+}
+
+/**
+ * Get the current festival phase.
+ *
+ * @since UFO BUFO 1.0
+ *
+ * @return string One of 'phase_1', 'phase_2', 'phase_3', 'phase_4'.
+ */
+function ufobufo_get_festival_phase() {
+    return get_theme_mod( 'festival_phase', 'phase_4' );
+}
+
+/**
+ * Get the configured festival edition label.
+ *
+ * @since UFO BUFO 1.0
+ *
+ * @return string Festival edition label.
+ */
+function ufobufo_get_festival_edition_label() {
+    $default_label = 'UFO BUFO Festival 2025';
+
+    /**
+     * Stored in the Customizer under "Festival Settings".
+     */
+    $label = get_theme_mod( 'festival_edition_label', $default_label );
+
+    return $label;
 }
 
 /**
@@ -775,14 +998,374 @@ function ufobufo_should_show_festival_text() {
  *
  * @since UFO BUFO 1.0
  *
- * @param string $text The festival text to display (default: '(UFO BUFO Festival 2025)')
+ * @param string $text Optional custom festival text to display.
  * @return string The festival text if it should be displayed, empty string otherwise.
  */
-function ufobufo_get_festival_text( $text = '(UFO BUFO Festival 2025)' ) {
-    if ( ufobufo_should_show_festival_text() ) {
-        return $text;
+function ufobufo_get_festival_text( $text = '' ) {
+    $label = $text !== '' ? $text : ufobufo_get_festival_edition_label();
+
+    if ( ufobufo_should_show_festival_text() && ! empty( $label ) ) {
+        return $label;
     }
+
     return '';
+}
+
+/**
+ * Get the stage heading subtext.
+ *
+ * Currently unused (stage subtext is handled in the stage list area),
+ * but kept for potential future use.
+ *
+ * @since UFO BUFO 1.0
+ *
+ * @return string Empty string (no heading subtext).
+ */
+function ufobufo_get_stage_heading_subtext() {
+    return '';
+}
+
+/**
+ * Get the stage list subtext based on current festival phase.
+ *
+ * This text is rendered under the stage style line (where
+ * the legacy "(lineup coming very soon)" placeholder lived).
+ *
+ * Phase logic:
+ * - Phase 1: show "[festival name] [year]" (newest lineup year)
+ * - Phase 2: show "[festival name] [year]" (newest lineup year)
+ * - Phase 3: show localized "Další vystupující později" / "More artists TBA"
+ * - Phase 4: no subtext
+ *
+ * @since UFO BUFO 1.0
+ *
+ * @return string
+ */
+function ufobufo_get_stage_list_subtext() {
+    $phase = ufobufo_get_festival_phase();
+    $lang  = function_exists( 'pll_current_language' ) ? pll_current_language() : 'cs';
+
+    // Determine lineup context
+    $years          = ufobufo_get_lineup_years();
+    $newest_year    = reset( $years ); // newest year from sorted array
+    $requested_year = ufobufo_get_requested_lineup_year();
+
+    // If an explicit lineup_year is requested in the URL and it points to
+    // an older edition than the newest one, always behave like Phase 1/2
+    // and show "[festival name] [year]" for that archived lineup.
+    $is_archive_view = isset( $_GET['lineup_year'] ) && (int) $requested_year !== (int) $newest_year;
+
+    if ( $is_archive_view ) {
+        // Prefer configured homepage festival name, fall back to blog name.
+        $festival_name = '';
+        if ( function_exists( 'ufobufo_get_home_event_name' ) ) {
+            $festival_name = ufobufo_get_home_event_name();
+        }
+        if ( $festival_name === '' ) {
+            $festival_name = get_bloginfo( 'name' );
+        }
+
+        $festival_name = trim( $festival_name );
+
+        if ( $festival_name === '' || ! $requested_year ) {
+            return '';
+        }
+
+        return sprintf( '%s %d', $festival_name, (int) $requested_year );
+    }
+
+    switch ( $phase ) {
+        case 'phase_1':
+        case 'phase_2':
+            // Prefer configured homepage festival name, fall back to blog name.
+            $festival_name = '';
+            if ( function_exists( 'ufobufo_get_home_event_name' ) ) {
+                $festival_name = ufobufo_get_home_event_name();
+            }
+            if ( $festival_name === '' ) {
+                $festival_name = get_bloginfo( 'name' );
+            }
+
+            $festival_name = trim( $festival_name );
+
+            if ( $festival_name === '' || ! $newest_year ) {
+                return '';
+            }
+
+            return sprintf( '%s %d', $festival_name, (int) $newest_year );
+
+        case 'phase_3':
+            if ( $lang === 'en' ) {
+                return 'More artists TBA';
+            }
+            return 'Další vystupující později';
+
+        case 'phase_4':
+        default:
+            return '';
+    }
+}
+
+/**
+ * Check if the old lineup (previous edition) should be visible.
+ *
+ * - Phase 1: yes (show last year)
+ * - Phase 2: yes (dates updated, but lineup still old)
+ * - Phase 3: no (hide old lineup, new artists are being added)
+ * - Phase 4: no (current edition lineup is complete)
+ *
+ * @since UFO BUFO 1.0
+ *
+ * @return bool
+ */
+function ufobufo_should_show_old_lineup() {
+    $phase = ufobufo_get_festival_phase();
+
+    return in_array( $phase, array( 'phase_1', 'phase_2' ), true );
+}
+
+/**
+ * Get the festival event date range as a formatted string.
+ *
+ * Uses two Customizer date fields and outputs text like
+ * "24. 6. - 28. 6. 2026".
+ *
+ * Falls back to the legacy ACF "eventdate" field on the
+ * homepage if the Customizer dates are not configured.
+ *
+ * @since UFO BUFO 1.0
+ *
+ * @return string
+ */
+function ufobufo_get_event_date_range_text() {
+    $start_raw = get_theme_mod( 'festival_event_start_date', '' );
+    $end_raw   = get_theme_mod( 'festival_event_end_date', '' );
+
+    if ( empty( $start_raw ) || empty( $end_raw ) ) {
+        // Backwards compatibility: use ACF field if available.
+        if ( function_exists( 'get_field' ) ) {
+            $eventdate = get_field( 'eventdate' );
+            if ( ! empty( $eventdate ) ) {
+                return $eventdate;
+            }
+        }
+
+        return '';
+    }
+
+    try {
+        $start = new DateTime( $start_raw );
+        $end   = new DateTime( $end_raw );
+    } catch ( Exception $e ) {
+        if ( function_exists( 'get_field' ) ) {
+            $eventdate = get_field( 'eventdate' );
+            if ( ! empty( $eventdate ) ) {
+                return $eventdate;
+            }
+        }
+
+        return '';
+    }
+
+    $start_ts = $start->getTimestamp();
+    $end_ts   = $end->getTimestamp();
+
+    $start_day_month = date_i18n( 'j. n.', $start_ts );
+    $end_day_month   = date_i18n( 'j. n.', $end_ts );
+
+    // Same calendar year.
+    if ( $start->format( 'Y' ) === $end->format( 'Y' ) ) {
+        $year = $end->format( 'Y' );
+
+        // Same month: "24. 6. - 28. 6. 2026".
+        if ( $start->format( 'm' ) === $end->format( 'm' ) ) {
+            return sprintf( '%1$s - %2$s %3$s', $start_day_month, $end_day_month, $year );
+        }
+
+        // Different month, same year: show full dates.
+        $start_full = date_i18n( 'j. n. Y', $start_ts );
+        $end_full   = date_i18n( 'j. n. Y', $end_ts );
+
+        return sprintf( '%1$s - %2$s', $start_full, $end_full );
+    }
+
+    // Different years: always show full dates.
+    $start_full = date_i18n( 'j. n. Y', $start_ts );
+    $end_full   = date_i18n( 'j. n. Y', $end_ts );
+
+    return sprintf( '%1$s - %2$s', $start_full, $end_full );
+}
+
+/**
+ * Get all lineup years for the Program page.
+ *
+ * This is no longer driven by the "Available Lineup Years" Customizer
+ * setting. Instead, it always exposes all festival editions since 2013,
+ * skipping the years without a proper lineup (2020, 2021, 2023).
+ *
+ * @since UFO BUFO 1.0
+ *
+ * @return int[] Sorted array of years (newest first).
+ */
+function ufobufo_get_lineup_years() {
+    $start_year    = 2013;
+    $current_year  = (int) date_i18n( 'Y' );
+    $configured_raw = get_theme_mod( 'festival_lineup_years', date_i18n( 'Y' ) );
+    $configured_year = (int) $configured_raw;
+    $skip_years    = array( 2020, 2021, 2023 );
+
+    // Allow the lineup list to extend to the Customizer "Programme shows year"
+    // so that you can point the Program page at a future edition (e.g. 2026).
+    if ( $configured_year >= $start_year && $configured_year > $current_year ) {
+        $current_year = $configured_year;
+    }
+
+    $years = array();
+
+    for ( $year = $current_year; $year >= $start_year; $year-- ) {
+        if ( in_array( $year, $skip_years, true ) ) {
+            continue;
+        }
+
+        $years[] = $year;
+    }
+
+    return $years;
+}
+
+/**
+ * Get the currently selected lineup year.
+ *
+ * Priority:
+ * 1) "lineup_year" query parameter (if present and one of ufobufo_get_lineup_years())
+ * 2) Customizer setting "Programme shows year" (festival_lineup_years),
+ *    if it is a valid year from ufobufo_get_lineup_years()
+ * 3) Newest year from ufobufo_get_lineup_years().
+ *
+ * @since UFO BUFO 1.0
+ *
+ * @return int
+ */
+function ufobufo_get_requested_lineup_year() {
+    $years = ufobufo_get_lineup_years();
+
+    // 1) Explicit query parameter
+    if ( isset( $_GET['lineup_year'] ) ) {
+        $requested = (int) $_GET['lineup_year'];
+
+        if ( in_array( $requested, $years, true ) ) {
+            return $requested;
+        }
+    }
+
+    // 2) Customizer-controlled default year
+    $configured_year = (int) get_theme_mod( 'festival_lineup_years', date_i18n( 'Y' ) );
+    if ( in_array( $configured_year, $years, true ) ) {
+        return $configured_year;
+    }
+
+    // 3) Fallback: newest allowed year
+    $default_year = reset( $years );
+
+    return (int) $default_year;
+}
+
+/**
+ * Internal helper to pick language-aware theme_mod or ACF field.
+ *
+ * @param string $lang_mod_base  Base key for theme_mod (without language suffix).
+ * @param string $acf_cs         ACF field key for Czech.
+ * @param string $acf_en         ACF field key for English.
+ * @param bool   $is_textarea    Whether this is a multiline field.
+ *
+ * @return string
+ */
+function ufobufo_get_homepage_text_value( $lang_mod_base, $acf_cs, $acf_en, $is_textarea = false ) {
+    $lang = function_exists( 'pll_current_language' ) ? pll_current_language() : 'cs';
+
+    $suffix = ( $lang === 'en' ) ? '_en' : '_cs';
+    $mod    = $lang_mod_base . $suffix;
+
+    $value = get_theme_mod( $mod, '' );
+
+    if ( $value !== '' ) {
+        return $value;
+    }
+
+    // Fallback to legacy ACF fields.
+    if ( ! function_exists( 'get_field' ) ) {
+        return '';
+    }
+
+    if ( $lang === 'en' ) {
+        $acf_key = $acf_en;
+    } else {
+        $acf_key = $acf_cs;
+    }
+
+    $acf_value = get_field( $acf_key );
+
+    if ( empty( $acf_value ) ) {
+        return '';
+    }
+
+    return (string) $acf_value;
+}
+
+/**
+ * Homepage: welcome text above the main festival text.
+ *
+ * @return string
+ */
+function ufobufo_get_home_event_welcome_text() {
+    return ufobufo_get_homepage_text_value(
+        'festival_home_welcome_text',
+        'eventwelcometext',
+        'eventwelcometext_en',
+        true
+    );
+}
+
+/**
+ * Homepage: main festival text (tagline) under the welcome line.
+ *
+ * @return string
+ */
+function ufobufo_get_home_event_text() {
+    return ufobufo_get_homepage_text_value(
+        'festival_home_text',
+        'eventtext',
+        'eventtext_en',
+        true
+    );
+}
+
+/**
+ * Homepage: festival name in the main H1.
+ *
+ * @return string
+ */
+function ufobufo_get_home_event_name() {
+    return ufobufo_get_homepage_text_value(
+        'festival_home_name',
+        'eventname',
+        'eventname_en',
+        false
+    );
+}
+
+/**
+ * Homepage: festival location line under the date.
+ *
+ * @return string
+ */
+function ufobufo_get_home_event_location() {
+    return ufobufo_get_homepage_text_value(
+        'festival_home_location',
+        'eventlocation',
+        'eventlocation_en',
+        false
+    );
 }
 
 
@@ -831,4 +1414,77 @@ function display_boxes($cat_id, $posts_per_page = 6, $paginate = false) {
     endif;
 
     wp_reset_postdata();
+}
+
+
+/**
+ * Get stage image gallery HTML for given stage and edition year.
+ *
+ * @param string $stage_key main | groovy | chill | tribal
+ * @param int    $year      Edition year (e.g. 2026)
+ * @return string           Gallery <figure> HTML or empty string
+ */
+function ufobufo_get_stage_image_html( string $stage_key, int $year ): string
+{
+    if ( empty($stage_key) || empty($year) ) {
+        return '';
+    }
+
+    $year = (int) $year;
+
+    for ( $y = $year; $y >= 2000; $y-- ) {
+
+        $tag_slug = 'stage-' . sanitize_title($stage_key) . '-cs-' . $y . ', stage-' . sanitize_title($stage_key) . '-en-' . $y;
+
+        $posts = get_posts([
+            'posts_per_page' => 1,
+            'post_status'    => 'publish',
+            'tag'            => $tag_slug,
+            'meta_query'     => [
+                [
+                    'key'     => '_thumbnail_id',
+                    'compare' => 'EXISTS',
+                ]
+            ],
+            'no_found_rows'  => true,
+        ]);
+
+        if ( empty($posts) ) {
+            continue;
+        }
+
+        $post_id = $posts[0]->ID;
+
+        if ( ! has_post_thumbnail($post_id) ) {
+            continue;
+        }
+
+        $thumb_id  = get_post_thumbnail_id($post_id);
+        $full_url  = wp_get_attachment_image_url($thumb_id, 'full');
+        $image_html = wp_get_attachment_image(
+            $thumb_id,
+            'gallery-big',
+            false,
+            [
+                'loading'  => 'lazy',
+                'decoding' => 'async',
+                'sizes'    => 'auto, (max-width: 2000px) 100vw, 2000px',
+            ]
+        );
+
+        if ( ! $full_url || ! $image_html ) {
+            continue;
+        }
+
+        return '
+<figure class="wp-block-gallery has-nested-images columns-default is-cropped wp-block-gallery-3 is-layout-flex wp-block-gallery-is-layout-flex">
+    <figure class="wp-block-image size-large">
+        <a href="' . esc_url($full_url) . '" class="fancybox image" rel="gallery-0" aria-haspopup="dialog">
+            ' . $image_html . '
+        </a>
+    </figure>
+</figure>';
+    }
+
+    return '';
 }

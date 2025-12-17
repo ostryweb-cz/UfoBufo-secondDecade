@@ -206,12 +206,12 @@
             white-space: nowrap
             color: $bluelight-color
             text-transform: uppercase
-            $map: (600px: 16px, 601px: 14px,)
-            @include poly-fluid-sizing('font-size', $map)
+            font-size: 14px
             letter-spacing: 0.1em
             font-weight: 700
             text-decoration: none
             box-shadow: none
+            background: transparent
             
             &:hover
                 color: $color-blue
@@ -373,6 +373,12 @@
                 float: none
                 a
                     width: 100%
+
+// Non-mobile submenu line-height fix
+@media (min-width: 601px)
+    .topHeader .sub-menu li a
+        line-height: 40px !important
+        padding: 5px 20px !important
 
 
 

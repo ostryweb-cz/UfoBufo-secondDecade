@@ -26,7 +26,7 @@ UfoBufo-secondDecade/
 │   │   └── basicscroll.min.js # BasicScroll 3.0.4 (10KB)
 │   └── src/                # JavaScript source files
 │       ├── app.js          # Main entry point
-│       ├── components/     # jQuery-based components (7 files)
+│       ├── components/     # jQuery-based components (9 files)
 │       │   ├── fractal.js           # Homepage lens animation (GSAP)
 │       │   ├── gallerySwiper.js     # Gallery carousel with Swiper
 │       │   ├── modal.js             # Modal with iziModal
@@ -62,11 +62,11 @@ UfoBufo-secondDecade/
 │
 ├── *.php                    # WordPress template files
 ├── functions.php            # Main theme functionality
+├── tickets.php              # Tickets page template (legacy)
+├── tickets-2026.php         # Tickets page template (Customizer-driven)
 ├── style.css                # Theme metadata
 ├── package.json             # Build configuration
 ├── webpack.config.*.js      # Webpack configurations
-├── README.md                # Development documentation
-├── DEPLOY.md                # Deployment guide
 └── .gitignore               # Version control rules
 ```
 
@@ -74,6 +74,8 @@ UfoBufo-secondDecade/
 
 ### Core
 - **WordPress**: 5.9+
+- **WooCommerce**: Theme-compatible templates included (`woocommerce.php`, `archive-product.php`, `single-product.php`)
+- **Polylang**
 - **JavaScript**: jQuery-based with ES6 imports, Webpack 5, Babel
 - **CSS**: SASS with BEM methodology
 - **Build System**: Webpack (legacy) and Gulp for building
@@ -92,12 +94,6 @@ UfoBufo-secondDecade/
 - **front.js**: 39.4KB (theme code only, 81% reduction from 211KB)
 - **Total JS**: 293KB (all files separate for better caching)
 
-### Removed Libraries (Oct 2025)
-- ~~VideoJS~~ - Not used (homepage uses YouTube iframe embed)
-- ~~Tooltipster~~ - Not used (location.php tooltips are commented out)
-- ~~Moment.js~~ - Not used
-- ~~svg4everybody~~ - Not needed
-
 ### Build Tools
 - Webpack 5 (legacy config) for JS bundling
 - Babel for ES6+ transpilation
@@ -106,6 +102,48 @@ UfoBufo-secondDecade/
 - Copy Webpack Plugin for distribution
 
 ## Development Workflow
+
+### Festival Settings (Customizer)
+- Homepage festival header (welcome text, main text, name, date range, location) and stage edition label are configured in **Appearance → Customize → Festival Settings**.
+- Festival lifecycle is controlled by the **Festival Phase** select (Phase 1–4) which drives lineup behaviour and stage subtexts.
+- **Programme shows year** (Customizer): controls which lineup year is shown by default on the Program page. This can be set to the current year or a **future** edition (e.g. 2026); internally, the theme auto-generates allowed lineup years from 2013 up to the higher of the current calendar year and this setting, skipping non-festival years (2020, 2021, 2023).
+- Program page also supports a `lineup_year` query parameter (e.g. `?lineup_year=2018`) to view specific old editions.
+- Legacy ACF fields on the Homepage template are still read as fallback when no Customizer values are set.
+
+### Tickets & Pricing (Customizer)
+- Tickets page behaviour is controlled in **Appearance → Customize → Tickets & Pricing**.
+- The Customizer-driven tickets UI is implemented in the page template: `tickets-2026.php` (**Template Name: Tickets 2026**).
+- `tickets.php` (**Template Name: Tickets**) is a legacy, hard-coded tickets template.
+- **Tickets Phase** select:
+  - Phase 1: "Tickets not available yet" – only intro text is shown, no price table.
+  - Phase 2: "Presale – ticket waves table" – presale waves and legend are shown.
+  - Phase 3: "Presale sold out – gate only" – same table structure, but intro text explains presale sold out / gate-only sales.
+- **Intro texts per phase**: `Phase 1/2/3 Intro (CS/EN)` control the paragraphs at the top of the Tickets page for Czech and English mutations.
+- **Fixed waves**: Early Bird, 1st wave, 2nd wave, Christmas gift ticket, 3rd wave, Final wave:
+  - Each wave has a "show row" checkbox and a **state**: Upcoming, On sale, Sold out.
+  - CZK prices (full and shorter tickets) are configured per wave for the Czech mutation.
+  - EUR prices (full and shorter tickets) are shared for both mutations.
+  - Optional BookTickets URLs per wave and language control the "Buy" button when state is set to **On sale**.
+- **Camping & parking legend**:
+  - "Parking text (CS/EN)" is injected under the `**** 🅿️ PARKING:` legend line and supports basic HTML.
+  - "Camping text (CS/EN)" is injected below the "STANOVÁNÍ V KEMPU" / "TENT CAMPING" lines for each language.
+
+### Program Page Lineup & Stage Images
+- Program template: `category-template.php` includes all stage templates from `template-parts/stages/`.
+- The visible lineup year is resolved by `ufobufo_get_requested_lineup_year()` using this priority:
+  1. `lineup_year` query parameter (if present and allowed)
+  2. Customizer setting **Programme shows year**
+  3. Newest allowed year from `ufobufo_get_lineup_years()`.
+- Stage list subtext under the "stage-style" line is computed by `ufobufo_get_stage_list_subtext()`:
+  - Phase 1 & 2: shows `[festival name] [newest year]`.
+  - Phase 3: shows localized "More artists TBA" / "Další vystupující později".
+  - Phase 4: no subtext.
+  - When a specific `lineup_year` is requested and it is **older than the newest year**, subtext always behaves like Phase 1/2 and shows `[festival name] [requested year]` regardless of current phase.
+- Stage images per edition are handled by `ufobufo_get_stage_image_html( $stage_key, $year )` in `functions.php`:
+  - `$stage_key` values correspond to stage templates: `main`, `groovy`, `chill`, `tribal`.
+  - Images are configured via **featured images** on posts tagged with `stage-{stage_key}-{year}` (e.g. `stage-main-2025`).
+  - When viewing edition *N*, the helper walks **backwards** through earlier lineup years and uses the most recent previous edition that has an image (e.g. 2026 edition will use `stage-main-2025`; if missing, it will fall back to older years).
+  - If no previous edition has a tagged image, no stage image is rendered.
 
 ### Initial Setup
 ```bash
@@ -125,9 +163,10 @@ npm run build:dev    # Build development JS (human-readable)
 ```bash
 npm run dist         # Build complete WordPress theme to /dist/
 npm run dist:clean   # Remove /dist/ folder
-npm run dist:package # Create .tar.gz archive
 npm run deploy       # Build and show deployment message
 ```
+
+**Note:** `npm run dist:package` creates a `.tar.gz` archive; do not use it in this workflow.
 
 ### CSS Compilation
 ```bash
@@ -208,7 +247,7 @@ All libraries loaded separately from /js/vendor/ via wp_enqueue_script():
 - SASS source files (css/sass/)
 - node_modules/
 - Build configurations (webpack.config.*.js, package.json)
-- Development files (.gitignore, README.md)
+- Development files (.gitignore)
 - .git/ directory
 
 ### Building Distribution
@@ -221,7 +260,6 @@ The distribution folder contains a complete, production-ready WordPress theme:
 - No source files or build tools
 - Only compiled assets
 - Ready to copy to `/wp-content/themes/`
-- Can be packaged as .tar.gz for server upload
 
 ## Deployment Process
 
@@ -233,9 +271,8 @@ cp -r dist/UfoBufo-secondDecade /path/to/wordpress/wp-content/themes/
 
 ### Production Server Deployment
 ```bash
-npm run dist:package
-# Creates: dist/UfoBufo-secondDecade-YYYYMMDD.tar.gz
-# Upload to server and extract
+npm run dist
+# Upload/copy: dist/UfoBufo-secondDecade/ to the server and place into /wp-content/themes/
 ```
 
 ### Post-Deployment Checklist
@@ -362,10 +399,6 @@ npm run build
 npm run deploy
 ```
 
-**Package for Upload:**
-```bash
-npm run dist:package
-```
 
 ### File Locations
 
@@ -378,6 +411,6 @@ npm run dist:package
 
 ---
 
-**Last Updated**: October 2025  
-**Theme Version**: 1.0.1  
+**Last Updated**: December 2025  
+**Theme Version**: 1.0.2  
 **WordPress Version**: 5.9+
