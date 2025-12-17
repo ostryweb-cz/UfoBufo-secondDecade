@@ -106,13 +106,16 @@
                                         $image_id = $image_object['ID'];
 
                                         ?>
-                                        <div class="swiper-slide" style="background-image: url('<?php echo $image_url ?>');">
-
+                                        <div class="swiper-slide">
+                                            <img
+                                                class="modal-gallery-image"
+                                                data-src="<?php echo esc_url($image_url) ?>"
+                                                alt="<?php echo esc_attr($image_alt) ?>"
+                                                decoding="async"
+                                            />
                                             <?php  $image_caption = $image_object['caption']; ;  if (!empty($image_caption)): ?>
                                                 <p><?php echo $image_caption ?></p>
                                             <?php endif; ?>
-
-
                                         </div>
                                         <?php ?>
                                     <?php endwhile; ?>

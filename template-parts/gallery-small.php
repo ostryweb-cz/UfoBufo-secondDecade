@@ -28,16 +28,23 @@
                 <?php
                 // first, get the image object returned by ACF
                 $image_object = get_sub_field('img');
-                // and the image size you want to return
-                $image_size = 'medium_large';
-                // now, we'll exctract the image URL from $image_object
-                $image_url = $image_object['sizes'][$image_size];
-                $image_alt = $image_object['alt'];
                 $image_id = $image_object['ID'];
-
                 $image_caption = $image_object['caption'];
                 ?>
-                <img class="open--gallery" src="<?php echo $image_url ?>" alt="<?php echo $image_alt ?>"/>
+
+                <?php
+                // Let WordPress render responsive thumbnail markup (srcset + loading=lazy)
+                echo wp_get_attachment_image(
+                    $image_id,
+                    'medium',
+                    false,
+                    array(
+                        'class' => 'open--gallery',
+                        'loading' => 'lazy',
+                        'decoding' => 'async',
+                    )
+                );
+                ?>
                 <p><?php echo $image_caption ?></p>
 
             </a>

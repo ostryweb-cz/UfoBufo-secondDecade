@@ -5,17 +5,35 @@ import $ from "jquery";
 export function mainSlider() {
     //initialize swiper when document ready
 
-    // let imageIndex = 0;
-
-
     let slides = $('.galleryItem').length  - 1;
     $('.galleryItem__length').html("(" + slides + ")");
 
-
-    //console.log(slides - 3);
-
     let swiper;
-    // let swiperThumbs;
+
+    function ensureSlideImageLoaded(swiperInstance, slideIndex) {
+        if (!swiperInstance || !swiperInstance.slides) return;
+        if (slideIndex < 0 || slideIndex >= swiperInstance.slides.length) return;
+
+        const slideEl = swiperInstance.slides[slideIndex];
+        if (!slideEl) return;
+
+        const imgEl = slideEl.querySelector('img[data-src]');
+        if (!imgEl) return;
+
+        const src = imgEl.getAttribute('data-src');
+        if (!src) return;
+
+        imgEl.setAttribute('src', src);
+        imgEl.removeAttribute('data-src');
+    }
+
+    function ensureActiveAndNeighborImagesLoaded(swiperInstance) {
+        if (!swiperInstance) return;
+        const idx = swiperInstance.activeIndex;
+        ensureSlideImageLoaded(swiperInstance, idx);
+        ensureSlideImageLoaded(swiperInstance, idx - 1);
+        ensureSlideImageLoaded(swiperInstance, idx + 1);
+    }
 
     let modalGallerySettings = {
         appendTo: ".body",
@@ -34,8 +52,6 @@ export function mainSlider() {
         onOpened: function () {
             $("body").addClass("bodyfixedmodal");
 
-
-
             // Use global Swiper (swiper-bundle includes all modules)
             swiper = new window.Swiper('.swiper-container', {
                 initialSlide: window.imageIndex - 1,
@@ -52,23 +68,28 @@ export function mainSlider() {
                 on: {
                     init: function () {
                         $(".swiper-container").css("visibility", "visible");
+                        ensureActiveAndNeighborImagesLoaded(this);
+                    },
+                    slideChange: function () {
+                        ensureActiveAndNeighborImagesLoaded(this);
                     }
                 },
             });
 
             swiper.update();
-
-
         },
         onClosing: function () {
             $("body").removeClass("bodyfixedmodal");
             $(".swiper-container").css("visibility", "hidden");
 
+            if (swiper) {
+                swiper.destroy(true, true);
+                swiper = undefined;
+            }
         }
     };
 
     $("#modal-gallery").iziModal(modalGallerySettings);
-
 
     $("body").on("click", ".galleryItem", function(event) {
         let modalTransitions = {
@@ -79,9 +100,6 @@ export function mainSlider() {
         event.preventDefault();
         window.imageIndex = $(this).data("imageidx");
         $("#modal-gallery").iziModal("open", modalTransitions);
-
-
-
     });
 
 }
