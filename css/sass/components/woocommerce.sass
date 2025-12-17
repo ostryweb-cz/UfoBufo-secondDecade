@@ -1,0 +1,30 @@
+// ===============================================================
+// WooCommerce
+// ===============================================================
+
+// Ensure variation dropdowns look like regular/native select boxes.
+// (Some global theme styles make form controls look too custom/minimal.)
+
+.detail__Inner.woocommerce
+    form.variations_form
+        table.variations
+            td.label
+                color: $color-white
+
+            select
+                -webkit-appearance: menulist
+                appearance: auto
+                background: $color-white
+                color: $color-black
+                border: 1px solid rgba(0, 0, 0, 0.35)
+                border-radius: 4px
+                padding: 6px 12px
+                height: 40px
+                line-height: 1.2
+                font-size: 16px
+                width: 100%
+                max-width: 420px
+
+            select:focus
+                outline: 2px solid rgba(0, 174, 239, 0.55)
+                outline-offset: 2px
