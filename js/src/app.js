@@ -24,11 +24,14 @@ $(() => {
     trimItems();
     replaceDates();
     mainSlider();
-
     //preloader
-    $(window).load(function() {
+    if (document.readyState === 'complete') {
         $('.loader').fadeOut('slow');
-    });
+    } else {
+        $(window).on('load', function () {
+            $('.loader').fadeOut('slow');
+        });
+    }
 
     //paralax
     document.querySelectorAll('.scene').forEach((elem) => {

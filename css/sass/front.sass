@@ -1,42 +1,35 @@
 // Vendor
-@import "core/variables"
-@import "vendor/swiper-vendor"
-@import "vendor/modal"
-@import "vendor/tooltipster"
-
-
-@import "core/mixins"
-
+@use "core/globals" as *
+@use "vendor/swiper-vendor"
+@use "vendor/modal" as vendorModal
+@use "vendor/tooltipster"
 
 // Core
-
-@import "core/reset"
-@import "core/helpers"
-@import "core/typography"
-@import "core/grid"
-@import "core/icons"
-
+@use "core/reset"
+@use "core/helpers"
+@use "core/typography"
+@use "core/grid"
+@use "core/icons"
 
 // Components
-@import "components/header"
-@import "components/lineUp"
-@import "components/buttons"
-@import "components/pagination"
-@import "components/footer"
-@import "components/modal"
-@import "components/loader"
-@import "components/front-paralax"
-@import "components/breadcrumbs"
-@import "components/ticket"
-@import "components/detail"
-@import "components/woocommerce"
-@import "components/boxes"
-@import "components/search"
-@import "components/video-bg"
-@import "components/swiper"
-@import "components/mosaic"
-@import "components/plan"
+@use "components/header"
+@use "components/lineUp"
+@use "components/buttons"
+@use "components/pagination"
+@use "components/footer"
+@use "components/modal" as themeModal
+@use "components/loader"
+@use "components/front-paralax"
+@use "components/breadcrumbs"
+@use "components/ticket"
+@use "components/detail"
+@use "components/woocommerce"
+@use "components/boxes"
+@use "components/search"
+@use "components/video-bg"
+@use "components/swiper"
+@use "components/mosaic"
+@use "components/plan"
 
-
-@import "vendor/video"
+@use "vendor/video"
 

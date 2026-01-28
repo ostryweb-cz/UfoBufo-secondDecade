@@ -8,11 +8,51 @@
                             <div class="span span--25 links">
                                 <h4>Follow us</h4>
                                 <ul>
-                                    <li><a href="https://www.facebook.com/events/3441146912696182/" target="_blank"><i class="icon-facebook"></i>Event on Facebook</a></li>
-                                    <li><a href="https://www.facebook.com/ufobufo.eu" target="_blank"><i class="icon-facebook"></i>Page on Facebook</a></li>
-                                    <li><a href="https://www.instagram.com/ufobufo/" target="_blank"><i class="icon-instagram"></i>Instagram</a></li>
-                                    <li><a href="https://soundcloud.com/ufo-bufo" target="_blank"><i class="icon-play"></i>Soundcloud</a></li>
-                                    <li><a href="https://www.mixcloud.com/UFO_BUFO/" target="_blank"><i class="icon-play"></i>Mixcloud</a></li>
+                                    <?php $fb_event_url = ufobufo_get_facebook_event_url(); ?>
+                                    <?php if ( ! empty( $fb_event_url ) ) : ?>
+                                        <li>
+                                            <a href="<?php echo esc_url( $fb_event_url ); ?>" target="_blank">
+                                                <i class="icon-facebook"></i><?php esc_html_e( 'Event on Facebook', 'ufobufo' ); ?>
+                                            </a>
+                                        </li>
+                                    <?php endif; ?>
+
+                                    <?php
+                                    $locations = get_nav_menu_locations();
+                                    if ( ! empty( $locations['footer-social-menu'] ) ) {
+                                        $menu      = wp_get_nav_menu_object( $locations['footer-social-menu'] );
+                                        $menu_items = $menu ? wp_get_nav_menu_items( $menu->term_id ) : array();
+
+                                        if ( ! empty( $menu_items ) ) {
+                                            foreach ( $menu_items as $item ) {
+                                                $icon_class = '';
+                                                $url        = isset( $item->url ) ? $item->url : '';
+
+                                                if ( strpos( $url, 'facebook.com' ) !== false ) {
+                                                    $icon_class = 'icon-facebook';
+                                                } elseif ( strpos( $url, 'instagram.com' ) !== false ) {
+                                                    $icon_class = 'icon-instagram';
+                                                } elseif (
+                                                    strpos( $url, 'soundcloud.com' ) !== false
+                                                    || strpos( $url, 'mixcloud.com' ) !== false
+                                                ) {
+                                                    $icon_class = 'icon-play';
+                                                }
+
+                                                $target = ! empty( $item->target ) ? ' target="' . esc_attr( $item->target ) . '"' : '';
+                                                ?>
+                                                <li>
+                                                    <a href="<?php echo esc_url( $url ); ?>"<?php echo $target; ?>>
+                                                        <?php if ( $icon_class ) : ?>
+                                                            <i class="<?php echo esc_attr( $icon_class ); ?>"></i><?php endif; 
+                                                            echo esc_html( $item->title ); ?>
+                                                    </a>
+                                                </li>
+                                                <?php
+                                            }
+                                        }
+                                    }
+                                    ?>
                                 </ul>
                             </div>
                             <div class="span span--25 download">
@@ -38,11 +78,51 @@
                             <div class="span span--25 links">
                                    <h4>Sledujte nás</h4>
                                 <ul>
-                                    <li><a href="https://www.facebook.com/events/3441146912696182/" target="_blank"><i class="icon-facebook"></i>Událost na Facebooku</a></li>
-                                    <li><a href="https://www.facebook.com/ufobufo.eu" target="_blank"><i class="icon-facebook"></i>Stránka na Facebooku</a></li>
-                                    <li><a href="https://www.instagram.com/ufobufo/" target="_blank"><i class="icon-instagram"></i>Instagram</a></li>
-                                    <li><a href="https://soundcloud.com/ufo-bufo" target="_blank"><i class="icon-play"></i>Soundcloud</a></li>
-                                    <li><a href="https://www.mixcloud.com/UFO_BUFO/" target="_blank"><i class="icon-play"></i>Mixcloud</a></li>
+                                    <?php $fb_event_url = ufobufo_get_facebook_event_url(); ?>
+                                    <?php if ( ! empty( $fb_event_url ) ) : ?>
+                                        <li>
+                                            <a href="<?php echo esc_url( $fb_event_url ); ?>" target="_blank">
+                                                <i class="icon-facebook"></i><?php esc_html_e( 'Událost na Facebooku', 'ufobufo' ); ?>
+                                            </a>
+                                        </li>
+                                    <?php endif; ?>
+
+                                    <?php
+                                    $locations = get_nav_menu_locations();
+                                    if ( ! empty( $locations['footer-social-menu'] ) ) {
+                                        $menu      = wp_get_nav_menu_object( $locations['footer-social-menu'] );
+                                        $menu_items = $menu ? wp_get_nav_menu_items( $menu->term_id ) : array();
+
+                                        if ( ! empty( $menu_items ) ) {
+                                            foreach ( $menu_items as $item ) {
+                                                $icon_class = '';
+                                                $url        = isset( $item->url ) ? $item->url : '';
+
+                                                if ( strpos( $url, 'facebook.com' ) !== false ) {
+                                                    $icon_class = 'icon-facebook';
+                                                } elseif ( strpos( $url, 'instagram.com' ) !== false ) {
+                                                    $icon_class = 'icon-instagram';
+                                                } elseif (
+                                                    strpos( $url, 'soundcloud.com' ) !== false
+                                                    || strpos( $url, 'mixcloud.com' ) !== false
+                                                ) {
+                                                    $icon_class = 'icon-play';
+                                                }
+
+                                                $target = ! empty( $item->target ) ? ' target="' . esc_attr( $item->target ) . '"' : '';
+                                                ?>
+                                                <li>
+                                                    <a href="<?php echo esc_url( $url ); ?>"<?php echo $target; ?>>
+                                                        <?php if ( $icon_class ) : ?>
+                                                            <i class="<?php echo esc_attr( $icon_class ); ?>"></i><?php endif; ?><?php 
+                                                            echo esc_html( $item->title ); ?>
+                                                    </a>
+                                                </li>
+                                                <?php
+                                            }
+                                        }
+                                    }
+                                    ?>
                                 </ul>                   
                             </div>
                             <div class="span span--25 download">

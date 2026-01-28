@@ -3,185 +3,6 @@
 // Load customizer functionality
 require get_template_directory() . '/inc/customizer.php';
 
-/**
- * Polylang + WooCommerce
- *
- * Goal: do NOT translate products, but make them visible in both language mutations.
- *
- * - We remove WooCommerce post types/taxonomies from Polylang language filtering.
- * - We also fix the language switcher so it does not fall back to the front page
- *   on product/shop pages when products are intentionally "untranslated".
- */
-if ( function_exists( 'pll_current_language' ) ) {
-    // Make products shared between languages (no translations needed).
-    add_filter( 'pll_get_post_types', function( $post_types, $hide ) {
-        if ( isset( $post_types['product'] ) ) {
-            unset( $post_types['product'] );
-        }
-        return $post_types;
-    }, 10, 2 );
-
-    /**
-     * Shared products should be viewable under any language URL.
-     *
-     * Polylang (and WordPress) may try to redirect "wrong language" URLs to the
-     * canonical one. Example: /cs/merch/slug/ -> /merch/slug/.
-     *
-     * Disable these canonical redirects for WooCommerce contexts so the page can
-     * render with Czech UI (menus/strings) while showing the same product.
-     */
-    add_filter( 'redirect_canonical', function( $redirect_url ) {
-        if ( function_exists( 'is_shop' ) && is_shop() ) {
-            return false;
-        }
-
-        if ( is_singular( 'product' ) || is_post_type_archive( 'product' ) ) {
-            return false;
-        }
-
-        if ( is_tax( array( 'product_cat', 'product_tag' ) ) ) {
-            return false;
-        }
-
-        return $redirect_url;
-    }, 10 );
-
-    // Polylang canonical redirect (same idea as redirect_canonical but inside Polylang).
-    // Return false to prevent redirection.
-    add_filter( 'pll_check_canonical_url', function( $redirect ) {
-        if ( function_exists( 'is_shop' ) && is_shop() ) {
-            return false;
-        }
-
-        if ( is_singular( 'product' ) || is_post_type_archive( 'product' ) ) {
-            return false;
-        }
-
-        if ( is_tax( array( 'product_cat', 'product_tag' ) ) ) {
-            return false;
-        }
-
-        return $redirect;
-    }, 10 );
-
-    // Make WooCommerce taxonomies shared too.
-    add_filter( 'pll_get_taxonomies', function( $taxonomies, $is_settings ) {
-        foreach ( array( 'product_cat', 'product_tag', 'product_shipping_class' ) as $tax ) {
-            if ( isset( $taxonomies[ $tax ] ) ) {
-                unset( $taxonomies[ $tax ] );
-            }
-        }
-
-        // Product attribute taxonomies are dynamic and always prefixed with "pa_".
-        foreach ( $taxonomies as $key => $tax ) {
-            $name = is_string( $tax ) ? $tax : (string) $key;
-            if ( strpos( $name, 'pa_' ) === 0 ) {
-                unset( $taxonomies[ $key ] );
-            }
-        }
-
-        return $taxonomies;
-    }, 10, 2 );
-
-    // Keep language switcher on the same product/shop URL even when there is no translation.
-    add_filter( 'pll_translation_url', function( $url, $lang ) {
-        if ( null !== $url ) {
-            return $url;
-        }
-
-        $is_product_context = false;
-
-        if ( function_exists( 'is_product' ) && is_product() ) {
-            $is_product_context = true;
-        } elseif ( function_exists( 'is_shop' ) && is_shop() ) {
-            $is_product_context = true;
-        } elseif ( is_post_type_archive( 'product' ) ) {
-            $is_product_context = true;
-        } elseif ( is_singular( 'product' ) ) {
-            $is_product_context = true;
-        } elseif ( is_tax( array( 'product_cat', 'product_tag' ) ) ) {
-            $is_product_context = true;
-        }
-
-        if ( ! $is_product_context ) {
-            return $url;
-        }
-
-        $request_uri = isset( $_SERVER['REQUEST_URI'] ) ? (string) $_SERVER['REQUEST_URI'] : '';
-        if ( $request_uri === '' ) {
-            return $url;
-        }
-
-        $current_lang = pll_current_language();
-        $current_home = pll_home_url( $current_lang );
-        $target_home  = pll_home_url( $lang );
-
-        $current_path = (string) wp_parse_url( $current_home, PHP_URL_PATH );
-
-        // Strip current language path prefix from the request URI to get a relative path.
-        $relative = $request_uri;
-        if ( $current_path !== '' && strpos( $relative, $current_path ) === 0 ) {
-            $relative = '/' . ltrim( substr( $relative, strlen( $current_path ) ), '/' );
-        }
-
-        // Build target URL.
-        $base = rtrim( $target_home, '/' );
-        $path = '/' . ltrim( $relative, '/' );
-
-        return $base . $path;
-    }, 10, 2 );
-
-    /**
-     * Ensure WooCommerce product queries are not filtered by Polylang language.
-     *
-     * This is required for the "shared products" approach where products are not
-     * translated but should appear in all languages.
-     */
-    add_action( 'woocommerce_product_query', function( $q ) {
-        if ( ! $q instanceof WP_Query ) {
-            return;
-        }
-
-        // Polylang filters WP_Query by language via SQL clause filters.
-        // We keep products shared/untranslated, so bypass those filters.
-        $q->set( 'suppress_filters', true );
-
-        // Defensive: clear the Polylang query var if present.
-        $q->set( 'lang', '' );
-    } );
-
-    /**
-     * Also bypass language filtering for the main query on WooCommerce contexts.
-     *
-     * This covers cases where the shop is routed as a translated Page
-     * (/cs/shop/ -> page.php) but WooCommerce still runs a main product query.
-     */
-    add_action( 'pre_get_posts', function( $q ) {
-        if ( is_admin() || ! $q instanceof WP_Query || ! $q->is_main_query() ) {
-            return;
-        }
-
-        $is_wc_context = false;
-
-        if ( function_exists( 'is_shop' ) && is_shop() ) {
-            $is_wc_context = true;
-        } elseif ( $q->is_singular( 'product' ) ) {
-            $is_wc_context = true;
-        } elseif ( $q->is_post_type_archive( 'product' ) ) {
-            $is_wc_context = true;
-        } elseif ( $q->is_tax( array( 'product_cat', 'product_tag' ) ) ) {
-            $is_wc_context = true;
-        }
-
-        if ( ! $is_wc_context ) {
-            return;
-        }
-
-        $q->set( 'suppress_filters', true );
-        $q->set( 'lang', '' );
-    }, 0 );
-}
-
 add_action('after_setup_theme', 'ufobufo_setup');
 function ufobufo_setup()
 {
@@ -195,6 +16,8 @@ function ufobufo_setup()
     add_theme_support('wc-product-gallery-zoom');
     add_theme_support('wc-product-gallery-lightbox');
     add_theme_support('wc-product-gallery-slider');
+
+    add_filter( 'wc_product_sku_enabled', '__return_false' );
     
     // Add HTML5 support for modern semantic markup
     add_theme_support('html5', array(
@@ -224,7 +47,10 @@ function ufobufo_setup()
     global $content_width;
     if (!isset($content_width)) $content_width = 640;
     register_nav_menus(
-        array('main-menu' => __('Main Menu', 'ufobufo'))
+        array(
+            'main-menu'         => __('Main Menu', 'ufobufo'),
+            'footer-social-menu'=> __('Footer social menu', 'ufobufo'),
+        )
     );
 }
 
@@ -994,6 +820,23 @@ function ufobufo_get_festival_edition_label() {
 }
 
 /**
+ * Get current Facebook event URL configured in the Customizer.
+ *
+ * @since UFO BUFO 1.0.3
+ *
+ * @return string Facebook event URL or empty string when not configured.
+ */
+function ufobufo_get_facebook_event_url() {
+    $url = get_theme_mod( 'festival_facebook_event_url', '' );
+
+    if ( empty( $url ) ) {
+        return '';
+    }
+
+    return $url;
+}
+
+/**
  * Get the festival text with proper conditional display.
  *
  * @since UFO BUFO 1.0
@@ -1434,7 +1277,7 @@ function ufobufo_get_stage_image_html( string $stage_key, int $year ): string
 
     for ( $y = $year; $y >= 2000; $y-- ) {
 
-        $tag_slug = 'stage-' . sanitize_title($stage_key) . '-cs-' . $y . ', stage-' . sanitize_title($stage_key) . '-en-' . $y;
+        $tag_slug = 'img-' . sanitize_title($stage_key) . '-cs-' . $y . ', img-' . sanitize_title($stage_key) . '-en-' . $y;
 
         $posts = get_posts([
             'posts_per_page' => 1,

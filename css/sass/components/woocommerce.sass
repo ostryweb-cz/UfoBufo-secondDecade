@@ -2,10 +2,189 @@
 // WooCommerce
 // ===============================================================
 
-// Ensure variation dropdowns look like regular/native select boxes.
-// (Some global theme styles make form controls look too custom/minimal.)
+@use "sass:color"
+@use "../core/globals" as *
+
+// IMPORTANT: Theme is dark. Keep WooCommerce UI readable on dark backgrounds.
+// Scope all overrides to the theme wrapper so other plugins/admin screens aren't affected.
+
+.woocommerce-cart .news-detail,
+.woocommerce-checkout .news-detail
+    background-color: #9f9f9f
+
+.woocommerce-page .detail__Inner ul li:before
+    content: none
+
+ul.woocommerce-error li,
+ul.woocommerce-info li,
+ul.woocommerce-message li,
+.woocommerce-page p
+    color: initial
 
 .detail__Inner.woocommerce
+    color: $color-white
+
+    // Links
+    a
+        color: $color-blue
+        &:hover
+            text-decoration: underline
+
+    // Notices
+    .woocommerce-message,
+    .woocommerce-info,
+    .woocommerce-error
+        background: rgba(255, 255, 255, 0.06)
+        color: $color-white
+        border-top: 3px solid $color-blue
+        padding: 14px 16px 14px 60px
+        border-radius: 8px
+
+        a
+            color: $color-blue
+
+    // Forms
+    label
+        color: $color-white
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="tel"],
+    input[type="search"],
+    input[type="number"],
+    textarea,
+    select
+        background: rgba(255, 255, 255, 0.06)
+        color: $color-white
+        border: 1px solid rgba(255, 255, 255, 0.18)
+        border-radius: 4px
+        padding: 10px 12px
+
+        &:focus
+            outline: 2px solid rgba(0, 174, 239, 0.55)
+            outline-offset: 2px
+
+    // Select2 (WooCommerce enhanced select fields)
+    .select2-container--default
+        .select2-selection--single,
+        .select2-selection--multiple
+            background: rgba(255, 255, 255, 0.06)
+            border: 1px solid rgba(255, 255, 255, 0.18)
+            border-radius: 4px
+
+        .select2-selection__rendered
+            color: $color-white
+
+        .select2-selection__arrow b
+            border-color: rgba(255, 255, 255, 0.6) transparent transparent transparent
+
+        .select2-results__option
+            color: $color-black
+
+    // Buttons (override WooCommerce defaults so our theme buttons win)
+    a.button,
+    button.button,
+    input.button,
+    #respond input#submit
+        padding: 0 25px
+        text-align: center
+        font-size: 15px
+        display: inline-block
+        border-radius: 30px
+        color: $color-white
+        transition: all 200ms ease-in-out
+        background: $color-blue
+        font-weight: 500
+        position: relative
+        outline: none
+        border: 0
+        text-decoration: none
+        line-height: 2em
+
+        &:hover
+            background: color.adjust($color-blue, $lightness: -3%)
+            color: $color-white
+
+    // Tables (cart / checkout / order tables)
+    table.shop_table
+        background: rgba(255, 255, 255, 0.03)
+        border: 1px solid rgba(255, 255, 255, 0.10)
+        border-radius: 10px
+
+        th,
+        td
+            color: $color-white
+            border-color: rgba(255, 255, 255, 0.10)
+
+        a
+            color: $color-blue
+
+    // Product grid (Shop archive)
+    ul.products
+        li.product
+            background: rgba(255, 255, 255, 0.03)
+            border-radius: 10px
+            padding: 15px
+            box-shadow: 0 5px 20px 0 rgba(0, 0, 0, 0.35)
+
+            .woocommerce-loop-product__title
+                color: $color-white
+
+            .price
+                color: $color-white
+
+                del
+                    color: rgba(255, 255, 255, 0.55)
+
+                ins
+                    color: $orange-color
+                    text-decoration: none
+
+    // Single product
+    div.product
+        p.price,
+        span.price
+            color: $orange-color
+
+        .woocommerce-tabs
+            ul.tabs
+                li
+                    a
+                        color: $color-white
+
+                li.active
+                    a
+                        color: $color-blue
+
+            .panel
+                background: rgba(255, 255, 255, 0.03)
+                padding: 20px
+                border-radius: 10px
+
+    // Checkout payment box
+    #payment
+        background: rgba(255, 255, 255, 0.03)
+        border-radius: 10px
+
+        ul.payment_methods
+            border-bottom: 1px solid rgba(255, 255, 255, 0.10)
+
+            li
+                color: $color-white
+
+                label
+                    color: $color-white
+
+        div.payment_box
+            background: rgba(255, 255, 255, 0.06)
+            color: $color-white
+
+            &:before
+                border-bottom-color: rgba(255, 255, 255, 0.06)
+
+    // Ensure variation dropdowns look like regular/native select boxes.
+    // (Some global theme styles make form controls look too custom/minimal.)
     form.variations_form
         table.variations
             td.label
@@ -14,15 +193,12 @@
             select
                 -webkit-appearance: menulist
                 appearance: auto
-                background: $color-white
+                background: $color-white !important
                 color: $color-black
                 border: 1px solid rgba(0, 0, 0, 0.35)
                 border-radius: 4px
                 padding: 6px 12px
-                height: 40px
                 line-height: 1.2
-                font-size: 16px
-                width: 100%
                 max-width: 420px
 
             select:focus

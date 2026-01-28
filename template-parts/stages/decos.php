@@ -51,5 +51,11 @@
         } ?>
             </div>
         </div>
-      <?php } ?>
+      <?php 
+
+          $years       = ufobufo_get_lineup_years();
+          $newest_year = reset( $years );
+          $is_archive_view = isset( $_GET['lineup_year'] ) && (int) $lineup_year !== (int) $newest_year;
+          echo ufobufo_get_stage_image_html( 'deco', $lineup_year);
+      } ?>
     </div>

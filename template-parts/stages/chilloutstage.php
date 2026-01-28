@@ -76,20 +76,10 @@
             echo '</div>';
           }
 
-          // Show stage image only for the newest lineup year (no archived view).
           $years       = ufobufo_get_lineup_years();
           $newest_year = reset( $years );
           $is_archive_view = isset( $_GET['lineup_year'] ) && (int) $lineup_year !== (int) $newest_year;
-
-        if ($is_archive_view){
-          echo ufobufo_get_stage_image_html( 'chill', $lineup_year);
-        } else {
-          echo '<figure class="wp-block-gallery has-nested-images columns-default is-cropped wp-block-gallery-3 is-layout-flex wp-block-gallery-is-layout-flex">
-          <figure class="wp-block-image size-large">
-            <a href="https://ufobufo.eu/wp-content/uploads/2025/04/1744183874857.jpg"><img loading="lazy" decoding="async" width="2000" height="1498" src="https://ufobufo.eu/wp-content/uploads/2025/04/1744183874857.jpg" alt="" class="wp-image-6874" srcset="https://ufobufo.eu/wp-content/uploads/2025/04/1744183874857.jpg 2000w, https://ufobufo.eu/wp-content/uploads/2025/04/1744183874857-300x225.jpg 300w, https://ufobufo.eu/wp-content/uploads/2025/04/1744183874857-1024x767.jpg 1024w, https://ufobufo.eu/wp-content/uploads/2025/04/1744183874857-768x575.jpg 768w, https://ufobufo.eu/wp-content/uploads/2025/04/1744183874857-1536x1150.jpg 1536w, https://ufobufo.eu/wp-content/uploads/2025/04/1744183874857-600x449.jpg 600w" sizes="auto, (max-width: 2000px) 100vw, 2000px" /></a>
-          </figure>
-        </figure>';
-          }
+          echo ufobufo_get_stage_image_html( 'chill', $lineup_year);    
  /*
     ?>
         <div class="lineUp-view chillout-stage lineUp-view--hidden ">

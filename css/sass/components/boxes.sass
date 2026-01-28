@@ -2,6 +2,8 @@
 // Boxes
 // ===============================================================
 
+@use "sass:color"
+@use "../core/globals" as *
 
 .more
     color: $color-blue
@@ -17,7 +19,7 @@
         top: 1px
         margin-right: 5px
     &:hover
-        color: darken($color-blue, 5%)
+        color: color.adjust($color-blue, $lightness: -5%)
 
 .row
     display: flex

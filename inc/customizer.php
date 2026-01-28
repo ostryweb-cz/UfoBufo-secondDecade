@@ -236,6 +236,19 @@ function ufobufo_customize_register( $wp_customize ) {
 		'type'        => 'date',
 	) );
 
+	// Facebook event URL (per edition)
+	$wp_customize->add_setting( 'festival_facebook_event_url', array(
+		'default'           => '',
+		'sanitize_callback' => 'esc_url_raw',
+	) );
+
+	$wp_customize->add_control( 'festival_facebook_event_url', array(
+		'label'       => __( 'Odkaz na Facebook událost', 'ufobufo' ),
+		'description' => __( 'URL aktuální Facebook události festivalu. Zobrazuje se v patičce webu.', 'ufobufo' ),
+		'section'     => 'festival_settings',
+		'type'        => 'url',
+	) );
+
 	// Default lineup year for the Program page
 	$wp_customize->add_setting( 'festival_lineup_years', array(
 		'default'           => date( 'Y' ),

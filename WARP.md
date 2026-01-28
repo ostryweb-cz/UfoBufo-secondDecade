@@ -155,9 +155,11 @@ npm run build
 ### Development Commands
 ```bash
 npm run dev          # Watch and rebuild automatically (webpack)
-npm run build        # Build production JS to /js/ using webpack
-npm run build:dev    # Build development JS (human-readable)
+npm run build        # Build production JS and auto-update version
+npm run build:dev    # Build development JS and auto-update version
 ```
+
+**Version Management:** Build commands automatically update `style.css` version using dmY format (e.g., 28012026). Multiple builds on the same day increment a suffix (28012026.1, 28012026.2, etc.). This is handled by `update-version.js` which runs before webpack.
 
 ### Distribution Commands
 ```bash
@@ -170,8 +172,12 @@ npm run deploy       # Build and show deployment message
 
 ### CSS Compilation
 ```bash
-sass css/sass/front.sass css/front.min.css --style=compressed
+npm run css:build
 ```
+
+`npm run dist` also runs this automatically before assembling `dist/UfoBufo-secondDecade/`.
+
+**SASS architecture note:** The SASS sources use the modern module system (`@use`/`@forward`) instead of deprecated `@import`. Shared variables + mixins are exposed via `css/sass/core/globals.sass`.
 
 ## Development Guidelines
 
@@ -411,6 +417,6 @@ npm run deploy
 
 ---
 
-**Last Updated**: December 2025  
-**Theme Version**: 1.0.2  
+**Last Updated**: January 2026  
+**Theme Version**: 1.0.3  
 **WordPress Version**: 5.9+

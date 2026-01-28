@@ -35,28 +35,29 @@ get_header(); ?>
               <?php
                 echo '<div class="ticketRow_Price"><p>120 &euro;<span>*</span> <br>111 &euro;<span>*</span></p></div>';
                 //echo '<div class="ticketRow_Price"><p>?? &euro;<span>*</span><br>?? &euro;<span>*</span></p></div>';
+            
+                // <div class="ticketRow_State">Not Available</div>
+                //<div class="ticketRow_State"><a class="button" href="https://www.book-tickets.cz/index.php?page=bookticket&event=159&lang=en&currency=EUR" target="_blank" title="Buy ticket at book-tickets.cz">Buy the ticket</a></div>
               ?>
                 <div class="ticketRow_State">Sold Out</div>
             </div>
-            <div class="ticketRow ticketRow">
+            <div class="ticketRow ticketRow--inactive">
                 <div class="ticketRow_Wave"><h3><span>Pre-sale</span>Christmas gift ticket</h3></div>
                 <div class="ticketRow_Days"><p>wed - sun</p></div>
               <?php
                 echo '<div class="ticketRow_Price"><p>128 &euro;<span>*</span></p></div>';
                 //echo '<div class="ticketRow_Price"><p>?? &euro;<span>*</span></span></p></div>';
               ?>
-                <div class="ticketRow_State"><a class="button" href="https://www.book-tickets.cz/index.php?page=bookticket&event=159&lang=en&currency=EUR" target="_blank" title="Buy ticket at book-tickets.cz">Buy the ticket</a></div>
+                <div class="ticketRow_State">Sold Out</div>
             </div>
-            <div class="ticketRow ticketRow--inactive">
+            <div class="ticketRow ticketRow">
                 <div class="ticketRow_Wave"><h3><span>Pre-sale</span>3rd wave</h3></div>
                 <div class="ticketRow_Days"><p>wed - sun <br>fri - sun**</p></div>
               <?php
                 echo '<div class="ticketRow_Price"><p>141 &euro;<span>*</span><br>133 &euro;<span>*</span></p></div>';
                 //echo '<div class="ticketRow_Price"><p>?? &euro;<span>*</span><br>?? &euro;<span>*</span></p></div>';
               ?>
-                <div class="ticketRow_State">Not Available</div>
-                <?php // <div class="ticketRow_State"><a class="button" href="https://www.book-tickets.cz/index.php?page=bookticket&event=136&lang=en&currency=EUR" target="_blank" title="Buy ticket at book-tickets.cz">Buy the ticket</a></div>
-                ?>
+                <div class="ticketRow_State"><a class="button" href="https://www.book-tickets.cz/index.php?page=bookticket&event=159&lang=en&currency=EUR" target="_blank" title="Buy ticket at book-tickets.cz">Buy the ticket</a></div>
             </div>
             <div class="ticketRow ticketRow--inactive">
                 <div class="ticketRow_Wave"><h3><span>Pre-sale</span>final wave</h3></div>
@@ -67,7 +68,7 @@ get_header(); ?>
               ?>
                 
                 <div class="ticketRow_State">
-                  <!--a class="button" href="https://www.book-tickets.cz/index.php?page=bookticket&event=136&lang=en&currency=EUR" target="_blank" title="Buy ticket at book-tickets.cz">Buy the ticket</a>
+                  <!--a class="button" href="https://www.book-tickets.cz/index.php?page=bookticket&event=159&lang=en&currency=EUR" target="_blank" title="Buy ticket at book-tickets.cz">Buy the ticket</a>
                   <div>Pre-sale until Sunday 15. 6. 2025</div-->
                   <!--Pre-sale finished-->
                   Not Available
@@ -139,7 +140,7 @@ get_header(); ?>
               ?>
                 <div class="ticketRow_State">Vyprodáno</div>
             </div>
-            <div class="ticketRow ticketRow">
+            <div class="ticketRow ticketRow--inactive">
                 <div class="ticketRow_Wave"><h3><span>Předprodej</span>Vánoční dárková vstupenka</h3></div>
                 <div class="ticketRow_Days"><p>st - ne</p></div>
               <?php
@@ -148,10 +149,12 @@ get_header(); ?>
                                   
                 //echo '<div class="ticketRow_Price"><p>?? Kč<span>*</span> <br>?? Kč<span>*</span></p></div>
                 //<div class="ticketRow_Price"><p>?? &euro;<span>*</span><br>?? &euro;<span>*</span></p></div>';
+            
+                //<div class="ticketRow_State"><a class="button" href="https://www.book-tickets.cz/ufobufo2026" target="_blank" title="Koupit vstupenku na book-tickets.cz">Koupit vstupenku</a></div>
               ?>
-                <div class="ticketRow_State"><a class="button" href="https://www.book-tickets.cz/ufobufo2026" target="_blank" title="Koupit vstupenku na book-tickets.cz">Koupit vstupenku</a></div>
+                <div class="ticketRow_State">Vyprodáno</div>
             </div>
-            <div class="ticketRow ticketRow--inactive">
+            <div class="ticketRow ticketRow">
                 <div class="ticketRow_Wave"><h3><span>Předprodej</span>3. vlna</h3></div>
                 <div class="ticketRow_Days"><p>st - ne <br>pá - ne**</p></div>
               <?php
@@ -161,7 +164,9 @@ get_header(); ?>
                 //echo '<div class="ticketRow_Price"><p>?? Kč<span>*</span> <br>?? Kč<span>*</span></p></div>
                // <div class="ticketRow_Price"><p>?? &euro;<span>*</span><br>?? &euro;<span>*</span></p></div>';
               ?>
-                <div class="ticketRow_State">Nejsou v prodeji.</div>
+                <div class="ticketRow_State"><a class="button" href="https://www.book-tickets.cz/ufobufo2026" target="_blank" title="Koupit vstupenku na book-tickets.cz">Koupit vstupenku</a></div>
+                <?php //<div class="ticketRow_State">Nejsou v prodeji.</div>
+                ?>
             </div>
             <div class="ticketRow ticketRow--inactive">
                 <div class="ticketRow_Wave"><h3><span>Předprodej</span>poslední vlna</h3></div>
@@ -175,7 +180,7 @@ get_header(); ?>
               ?>
                 <div class="ticketRow_State">Nejsou v prodeji.
                   <br>Ceny budou zveřejněny postupně. 
-                  <!--a class="button" href="https://www.book-tickets.cz/ufobufo2025" target="_blank" title="Koupit vstupenku na book-tickets.cz">Koupit vstupenku</a-->
+                  <!--a class="button" href="https://www.book-tickets.cz/ufobufo2026" target="_blank" title="Koupit vstupenku na book-tickets.cz">Koupit vstupenku</a-->
                   <!--div>Předprodej do neděle 15. 6. 2025</div-->
                   <!--Předprodej ukončen-->
                 </div>

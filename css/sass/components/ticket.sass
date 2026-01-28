@@ -2,6 +2,7 @@
 // Ticket table
 // ===============================================================
 
+@use "../core/globals" as *
 
 .ticketRow
     display: flex
@@ -16,6 +17,7 @@
         padding:  30px
         line-height: 40px
         box-sizing: border-box
+        align-items: center
 
     &_Wave
         width: 25%
@@ -93,13 +95,14 @@
     .ticketRow
         & > div
             padding:  15px
+        // 4 columns on the first row (Wave + Days + 2x Price), State wraps to the next row
         &_Wave
             width: 40%
             border-radius: 5px 0 0 0
         &_Days,
         &_Price
             min-width: 0
-            width: 30%
+            width: 20%
             p
                 white-space: nowrap
                 font-size: 14px

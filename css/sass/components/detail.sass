@@ -2,6 +2,7 @@
 // Buttons
 // ===============================================================
 
+@use "../core/globals" as *
 
 .detail__Inner
     padding: 5vh 7.5%
@@ -133,14 +134,51 @@
                     border-radius: 0 5px 5px 0
 
 .wp-block-image
-    figcaption
-        color: $bluelight-color
-        font-size: 12px
-        transform: translateY(-100%)
+    // Keep captions anchored to the bottom of the image (mobile-safe)
+    margin: 5% 0
+    position: relative
+
     img
+        display: block
         max-width: 100%
         height: auto
-        margin: 5% 0
+        margin: 0
+
+    figcaption
+        position: absolute
+        left: 0
+        right: 0
+        bottom: 0
+        margin: 0
+        padding: 8px 10px
+        box-sizing: border-box
+        color: $bluelight-color
+        font-size: 12px
+        background: rgba(0, 0, 0, 0.45)
+
+// Classic editor captions
+.wp-caption
+    margin: 5% 0
+    position: relative
+    max-width: 100%
+
+    img
+        display: block
+        max-width: 100%
+        height: auto
+        margin: 0
+
+    .wp-caption-text
+        position: absolute
+        left: 0
+        right: 0
+        bottom: 0
+        margin: 0
+        padding: 8px 10px
+        box-sizing: border-box
+        color: $bluelight-color
+        font-size: 12px
+        background: rgba(0, 0, 0, 0.45)
 
 @media screen and (max-width: 1000px)
     .detail__Inner
