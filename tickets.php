@@ -231,8 +231,18 @@ get_header(); ?>
     </div>
 </div>
 
-
-
+<script>
+document.addEventListener('click', function(event) {
+    var ticketButton = event.target.closest('.page-template-tickets .button');
+    if (ticketButton) {
+        gtag('event', 'ticket_purchase_intent', {
+            'event_category': 'conversion',
+            'event_label': 'Ticket Purchase Click',
+            'destination_url': ticketButton.href
+        });
+    }
+}, true);
+</script>
 
 <?php get_footer(); ?>
 

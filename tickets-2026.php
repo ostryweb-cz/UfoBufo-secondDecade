@@ -357,7 +357,18 @@ get_header(); ?>
         ?>
     </div>
 </div>
+<script>
+document.addEventListener('click', function (e) {
+  const btn = e.target.closest('.button');
+  if (!btn) return;
 
+  gtag('event', 'ticket_button_click', {
+    event_category: 'ticket',
+    event_label: btn.textContent.trim(),
+    page_location: window.location.href
+  });
+});
+</script>
 
 
 
