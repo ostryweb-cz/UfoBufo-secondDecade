@@ -213,6 +213,6 @@
             </div>
         </div>
         <?php wp_footer(); ?>
-        <script src="<?php bloginfo('template_url'); ?>/js/ostryweb.js"></script>
+        <script src="<?php bloginfo('template_url'); ?>/js/ostryweb.js?v=29126"></script>
     </body>
 </html>

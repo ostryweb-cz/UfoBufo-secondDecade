@@ -358,16 +358,16 @@ get_header(); ?>
     </div>
 </div>
 <script>
-document.addEventListener('click', function (e) {
-  const btn = e.target.closest('.button');
-  if (!btn) return;
-
-  gtag('event', 'ticket_button_click', {
-    event_category: 'ticket',
-    event_label: btn.textContent.trim(),
-    page_location: window.location.href
-  });
-});
+document.addEventListener('click', function(event) {
+    var ticketButton = event.target.closest('.page-template-tickets .button');
+    if (ticketButton) {
+        gtag('event', 'ticket_purchase_intent', {
+            'event_category': 'conversion',
+            'event_label': 'Ticket Purchase Click',
+            'destination_url': ticketButton.href
+        });
+    }
+}, true);
 </script>
 
 
