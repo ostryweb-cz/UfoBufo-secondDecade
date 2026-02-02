@@ -17,7 +17,7 @@
         	<h1><span><?php echo esc_html( $home_event_name ); ?></span></h1>
          </p>
         
-        <img src="<?php bloginfo('template_url'); ?>/img/ufobufo-logo-temp.png" alt="UFOBUFO"/>
+        <img src="<?php bloginfo('template_url'); ?>/img/ufobufo-festival-logo-2026.svg" alt="UFOBUFO"/>
         <?php $home_event_location = ufobufo_get_home_event_location(); ?>
         <p><span><?php echo esc_html( ufobufo_get_event_date_range_text() ); ?></span><br>
             <?php echo esc_html( $home_event_location ); ?>
@@ -27,13 +27,13 @@
     <div id="lens1" class="planet layer-1"></div>
     <div id="lens2" class="planet layer-2" ></div>
 
-    <div class="topparalax_layer topparalax_layer--0"  ></div>
+    <div class="topparalax_layer topparalax_layer--0" ></div>
     <div class="scene topparalax_layer topparalax_layer--1" data-modifier="50" ></div>
     <div class="scene topparalax_layer topparalax_layer--2" data-modifier="5" ></div>
     <div class="scene topparalax_layer topparalax_layer--3" data-modifier="3" ></div>
-    <!--div class="scene topparalax_layer topparalax_layer--4" data-modifier="9" ></div>
-    <div class="scene topparalax_layer topparalax_layer--5" data-modifier="4" ></div-->
-    <div id="paralax-end" class="topparalax_layer topparalax_layer--6"  ></div>
+    <div class="scene topparalax_layer topparalax_layer--4" data-modifier="9" ></div>
+    <!--div class="scene topparalax_layer topparalax_layer--5" data-modifier="4" ></div-->
+    <div id="paralax-end" class="topparalax_layer topparalax_layer--6" ></div>
 </div>
 
 <div class="block newsblock">

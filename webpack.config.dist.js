@@ -51,7 +51,7 @@ module.exports = {
                     to: path.join(distPath, 'css')
                 },
                 {
-                    from: 'css/2025.css',
+                    from: 'css/2026.css',
                     to: path.join(distPath, 'css')
                 },
                 

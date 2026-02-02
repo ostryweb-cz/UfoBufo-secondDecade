@@ -47,7 +47,7 @@ $v = wp_get_theme()->version;
     <link rel="stylesheet" type="text/css" href="<?php echo esc_url(get_template_directory_uri()); ?>/css/front.min.css?v=<?php echo esc_attr($v); ?>">
 <?php 
 //if ( current_user_can( 'manage_options' ) ) {
-echo '<link rel="stylesheet" type="text/css" href="'. esc_url(get_template_directory_uri()) .'/css/2025.css?v='. esc_attr($v) .'">';
+echo '<link rel="stylesheet" type="text/css" href="'. esc_url(get_template_directory_uri()) .'/css/2026.css?v='. esc_attr($v) .'">';
 //}
 ?>
 
