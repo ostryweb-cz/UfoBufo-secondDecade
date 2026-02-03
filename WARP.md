@@ -42,7 +42,8 @@ UfoBufo-secondDecade/
 ├── css/                     # Compiled CSS and SASS sources
 │   ├── sass/               # SASS source files (development)
 │   ├── front.min.css       # Main compiled stylesheet
-│   └── 2025.css            # Year-specific styles
+│   ├── 2025.css            # Year-specific styles (2025)
+│   └── 2026.css            # Year-specific styles (2026)
 │
 ├── template-parts/          # PHP template partials
 │   ├── boxes/              # Content box components
@@ -55,6 +56,9 @@ UfoBufo-secondDecade/
 │
 ├── fonts/                   # Web fonts
 ├── img/                     # Theme images and assets
+│   ├── 2024/               # 2024 stage images
+│   ├── 2026/               # 2026 stage images
+│   └── ufobufo-festival-logo-2026.svg  # 2026 festival logo
 ├── languages/               # Translation files (CS/EN)
 │
 ├── dist/                    # Distribution builds (generated)
@@ -328,7 +332,28 @@ npm run dist
 - Fonts: ~141KB
 - Images: ~23MB
 
-## Recent Changes (October 2025)
+## Recent Changes (February 2026)
+
+### 2026 Festival Assets (February 2, 2026)
+- ✅ **Added 2026 assets** - New stage images in `img/2026/` directory
+- ✅ **Added festival logo** - 2026 UFO BUFO logo (SVG format)
+- ✅ **Updated parallax images** - New parallax backgrounds for 2026 edition
+- ✅ **Updated stage images** - New imagery for all stages (main, groovy, chill, tribal)
+- ✅ **Added 2026 CSS** - Year-specific styling file `css/2026.css`
+- ✅ **Updated header and homepage** - Modified for 2026 edition
+- ✅ **Updated theme screenshot** - Reflects 2026 design
+
+### Assets Added
+- `img/2026/WEB_A_pozadi.jpg` - Background image
+- `img/2026/WEB_B_5meo_ring.png` - Stage visual element
+- `img/2026/WEB_C_radiowaves.png` - Stage visual element
+- `img/2026/WEB_D_shaman.png` - Stage visual element
+- `img/2026/WEB_E_synth.png` - Stage visual element
+- `img/2026/WEB_F_synth.png` - Stage visual element
+- `img/2026/WEB_G_flares.png` - Stage visual element
+- `img/ufobufo-festival-logo-2026.svg` - Festival logo
+
+## Previous Changes (October 2025)
 
 ### Library Externalization (October 3, 2025)
 - ✅ **Externalized all JS libraries** - Moved from bundled to separate files in /js/vendor/
@@ -417,6 +442,6 @@ npm run deploy
 
 ---
 
-**Last Updated**: January 2026  
-**Theme Version**: 1.0.3  
+**Last Updated**: February 2026  
+**Theme Version**: 1.0.4  
 **WordPress Version**: 5.9+
