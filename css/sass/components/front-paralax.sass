@@ -114,8 +114,8 @@
 
     &_layer
         width: 100%
-        height: calc(100vh - 60px)
-        bottom: 0
+        height: calc(100vh + 28px);
+        bottom: -28px;
         position: absolute
         background-size: cover !important
         &--0
@@ -178,6 +178,16 @@
                 white-space: normal
             img
                 min-width: 0
+        &_layer
+            left: 0 !important
+            transform: none !important
+            &--1,
+            &--2,
+            &--3,
+            &--4,
+            &--5,
+            &--6
+                transform: translateY(var(--translateY)) !important
     #planet-1,
     #planet-2,
     #star
@@ -206,22 +216,30 @@
                     display: block
         &_layer
             background-size: cover
+            left: 0 !important
+            transform: none !important
             &--0
                 background: url(../img/parallax0-600.jpg) center 50px no-repeat fixed
             &--1
                 background: url(../img/parallax1-600.png) center bottom no-repeat
+                transform: translateY(var(--translateY)) !important
 
             &--2
                 background: url(../img/parallax2-600.png) center bottom no-repeat
+                transform: translateY(var(--translateY)) !important
 
             &--3
                 background: url(../img/parallax3-n-600.png) center bottom no-repeat
+                transform: translateY(var(--translateY)) !important
 
             &--4
                 background: url(../img/parallax4-600.png) center bottom no-repeat
+                transform: translateY(var(--translateY)) !important
 
             &--5
                 background: url(../img/parallax5-600.png) center bottom no-repeat
+                transform: translateY(var(--translateY)) !important
 
             &--6
                 background: url(../img/parallax8-n-600.png) center bottom no-repeat
+                transform: translateY(var(--translateY)) !important
