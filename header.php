@@ -17,15 +17,26 @@
     <meta name="theme-color" content="#ffffff">
 
 <?php
-if (is_page()) { ?>
-		<meta name="description" content="Since 2010 we annually host psychedelic music and art festival (previously known as Cosmic Frog festival). In 2014 we became one of the biggest in Czech.">
-    <meta property="og:description" content="Since 2010 we annually host psychedelic music and art festival (previously known as Cosmic Frog festival). In 2014 we became one of the biggest in Czech."> 
+if (is_page()) { 
+	// Get current language for CS/EN mutation
+	$current_lang = function_exists('pll_current_language') ? pll_current_language() : 'cs';
+	$meta_desc_key = ('en' === $current_lang) ? 'festival_meta_description_en' : 'festival_meta_description_cs';
+	$meta_description = get_theme_mod($meta_desc_key, '');
+?>
+		<meta name="description" content="<?php echo esc_attr($meta_description); ?>">
+    <meta property="og:description" content="<?php echo esc_attr($meta_description); ?>"> 
     <meta property="og:title" content="<?php echo esc_attr(wp_get_document_title()); ?>">
     <meta property="og:site_name" content="UFO BUFO festival">
     <meta property="og:url" content="http://ufobufo.eu/">
     <meta property="og:type" content="website">
-    <meta property="og:image" content="<?php echo esc_url(get_template_directory_uri()); ?>/img/og-img.jpg">
-<?php } elseif (is_single()) { 
+    <?php 
+    	$og_image = get_theme_mod('festival_og_image', '');
+    	if (empty($og_image)) {
+    		$og_image = esc_url(get_template_directory_uri()) . '/img/og-img.jpg';
+    	}
+    ?>
+    <meta property="og:image" content="<?php echo esc_url($og_image); ?>">
+<?php } elseif (is_single()) {
     $post_title = get_the_title();
     $post_excerpt = get_the_excerpt();
     $post_url = get_permalink();

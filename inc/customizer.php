@@ -356,6 +356,41 @@ function ufobufo_customize_register( $wp_customize ) {
 		'type'        => 'text',
 	) );
 
+	// Meta descriptions for pages
+	$wp_customize->add_setting( 'festival_meta_description_cs', array(
+		'default'           => '',
+		'sanitize_callback' => 'sanitize_textarea_field',
+	) );
+	$wp_customize->add_setting( 'festival_meta_description_en', array(
+		'default'           => '',
+		'sanitize_callback' => 'sanitize_textarea_field',
+	) );
+
+	$wp_customize->add_control( 'festival_meta_description_cs', array(
+		'label'       => __( 'Meta popis stránky (CS)', 'ufobufo' ),
+		'description' => __( 'Popis pro meta tag a sociální sítě (česky). Cca 155 znaků.', 'ufobufo' ),
+		'section'     => 'festival_settings',
+		'type'        => 'textarea',
+	) );
+	$wp_customize->add_control( 'festival_meta_description_en', array(
+		'label'       => __( 'Meta popis stránky (EN)', 'ufobufo' ),
+		'description' => __( 'Popis pro meta tag a sociální sítě (anglicky). Cca 155 znaků.', 'ufobufo' ),
+		'section'     => 'festival_settings',
+		'type'        => 'textarea',
+	) );
+
+	// OG image for social sharing
+	$wp_customize->add_setting( 'festival_og_image', array(
+		'default'           => '',
+		'sanitize_callback' => 'esc_url_raw',
+	) );
+
+	$wp_customize->add_control( new WP_Customize_Image_Control( $wp_customize, 'festival_og_image', array(
+		'label'       => __( 'Obrázek pro sociální sítě (og:image)', 'ufobufo' ),
+		'description' => __( 'Obrázek zobrazený při sdílení na sociálních sítích. Doporučená velikost: 1200x630px.', 'ufobufo' ),
+		'section'     => 'festival_settings',
+	) ) );
+
 	// Tickets & Pricing section
 	$wp_customize->add_section( 'tickets_settings', array(
 		'title'    => __( 'Vstupenky a ceny', 'ufobufo' ),

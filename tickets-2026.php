@@ -183,7 +183,7 @@ get_header(); ?>
               <?php 
                 /* <br>*** the tickets for each day are valid from/to 10am. It is always necessary to buy the full ticket and in case you wish to leave the festival early, you shall announce such information. When leaving the festival return the wristband and get the price difference back. The days spent are added up - for example if you arrive on Wednesday and leave on Friday before 10 a.m., we count Wednesday + Thursday and you get the rest back upon leaving. */
               ?>
-              <br><b>Kids up to 14 years of age: entry free</b>
+              <br><b>Kids up to 14 years of age: entry free (accompanied by a parent or authorized adult)</b>
               <br><b>🚫 Please leave your pets at home, you will NOT be allowed to enter with a pet.</b>
               <br id="parking">
               <br>**** 🅿️ PARKING:
@@ -333,7 +333,7 @@ get_header(); ?>
                   <br>*** platnost vstupenek na jednotlivé dny začíná a končí v 10h dopoledne. Zaplatíte celofestivalovou vstupenku a nahlásíte záměr festival opustit dříve. Poté při včasném odchodu odevzdáte pásku a rozdíl ceny dostanete zpět. Strávené dny se sčítají - pokud přijedete například ve středu a odjedete v pátek před 10h dopoledne, napočítáme vám středu + čtvrtek a zbytek dostáváte na odjezdu zpět.
                   */
                 ?>
-                <br><b>Děti do 14-ti let: vstup zdarma</b>
+                <br><b>Děti do 14-ti let: vstup zdarma (v doprovodu rodiče nebo pověřeného dospělého)</b>
                 <br><b>ZTP/P i ZTP</b>: vstupenka opravňuje ke vstupu držitele průkazu a jeho 1 doprovod. S touto výhodou nelze využít dřívější odjezd / "jednodenní" vstup, který je k dostání na bráně.
                 <br><b>🚫 Domácí mazlíčky nechte doma, s ním NEBUDETE na festival vpuštěni.</b>
                 <br id="parking">

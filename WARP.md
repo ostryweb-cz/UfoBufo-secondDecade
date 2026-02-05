@@ -51,7 +51,6 @@ UfoBufo-secondDecade/
 │   └── *.php               # Other template parts
 │
 ├── inc/                     # PHP includes and helpers
-│   ├── webpack-assets.php  # Smart asset loading
 │   └── customizer.php      # WordPress customizer
 │
 ├── fonts/                   # Web fonts
@@ -113,6 +112,9 @@ UfoBufo-secondDecade/
 - **Programme shows year** (Customizer): controls which lineup year is shown by default on the Program page. This can be set to the current year or a **future** edition (e.g. 2026); internally, the theme auto-generates allowed lineup years from 2013 up to the higher of the current calendar year and this setting, skipping non-festival years (2020, 2021, 2023).
 - Program page also supports a `lineup_year` query parameter (e.g. `?lineup_year=2018`) to view specific old editions.
 - Legacy ACF fields on the Homepage template are still read as fallback when no Customizer values are set.
+- **Meta descriptions & og:image** (Customizer):
+  - `Meta popis stránky (CS/EN)` - Meta descriptions for pages (cca 155 characters each) used in both `<meta name="description">` and `<meta property="og:description">` tags
+  - `Obrázek pro sociální sítě (og:image)` - Image upload for social sharing (recommended 1200x630px), used in og:image tags with fallback to legacy `/img/og-img.jpg`
 
 ### Tickets & Pricing (Customizer)
 - Tickets page behaviour is controlled in **Appearance → Customize → Tickets & Pricing**.
@@ -333,6 +335,13 @@ npm run dist
 - Images: ~23MB
 
 ## Recent Changes (February 2026)
+
+### Meta Tags Moved to Customizer (February 5, 2026)
+- ✅ **Moved meta descriptions** - Hardcoded text in header.php now moved to customizer settings
+- ✅ **Added og:image customizer field** - Image upload control for social sharing (with fallback to legacy image)
+- ✅ **Language-aware meta tags** - Both Czech and English variants now configurable via customizer
+- ✅ **Removed unused file** - Deleted `inc/webpack-assets.php` (was not being used)
+- ✅ **Updated header.php** - Now uses customizer values with automatic language detection via Polylang
 
 ### 2026 Festival Assets (February 2, 2026)
 - ✅ **Added 2026 assets** - New stage images in `img/2026/` directory
