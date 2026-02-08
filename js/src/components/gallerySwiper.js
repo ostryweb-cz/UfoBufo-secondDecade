@@ -77,10 +77,24 @@ export function mainSlider() {
             });
 
             swiper.update();
+
+            // Add keyboard navigation
+            $(document).on('keydown.gallery', function(e) {
+                if (swiper) {
+                    if (e.key === 'ArrowRight') {
+                        swiper.slideNext();
+                    } else if (e.key === 'ArrowLeft') {
+                        swiper.slidePrev();
+                    }
+                }
+            });
         },
         onClosing: function () {
             $("body").removeClass("bodyfixedmodal");
             $(".swiper-container").css("visibility", "hidden");
+
+            // Remove keyboard navigation listener
+            $(document).off('keydown.gallery');
 
             if (swiper) {
                 swiper.destroy(true, true);
