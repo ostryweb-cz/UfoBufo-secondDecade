@@ -336,6 +336,14 @@ npm run dist
 
 ## Recent Changes (February 2026)
 
+### Gallery Masonry Layout (February 8, 2026)
+- ✅ **Converted gallery to true masonry** - Switched from CSS columns to CSS Grid with `grid-auto-flow: dense`
+- ✅ **Zero gaps between images** - Set `gap: 0` and fixed `grid-auto-rows: 200px`
+- ✅ **Image cropping** - Applied `object-fit: cover` to fill grid cells uniformly
+- ✅ **Responsive grid** - Uses `repeat(auto-fill, minmax(200px, 1fr))` for automatic column adjustments
+- ✅ **Intelligent gap-filling** - CSS Grid's dense packing algorithm fills gaps when images have different aspect ratios
+- ✅ **Removed legacy CSS columns** - Eliminated old column-based layout and media queries
+
 ### Meta Tags Moved to Customizer (February 5, 2026)
 - ✅ **Moved meta descriptions** - Hardcoded text in header.php now moved to customizer settings
 - ✅ **Added og:image customizer field** - Image upload control for social sharing (with fallback to legacy image)
