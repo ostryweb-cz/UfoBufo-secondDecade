@@ -35,6 +35,18 @@ export function mainSlider() {
         ensureSlideImageLoaded(swiperInstance, idx + 1);
     }
 
+    let paginationHideTimeout;
+
+    function showAndHidePagination() {
+        const $pagination = $(".swiper-pagination");
+        $pagination.stop(true, true).fadeIn(300);
+        
+        clearTimeout(paginationHideTimeout);
+        paginationHideTimeout = setTimeout(function() {
+            $pagination.fadeOut(300);
+        }, 1000);
+    }
+
     let modalGallerySettings = {
         appendTo: ".body",
         borderBottom: true,
@@ -69,9 +81,11 @@ export function mainSlider() {
                     init: function () {
                         $(".swiper-container").css("visibility", "visible");
                         ensureActiveAndNeighborImagesLoaded(this);
+                        showAndHidePagination();
                     },
                     slideChange: function () {
                         ensureActiveAndNeighborImagesLoaded(this);
+                        showAndHidePagination();
                     }
                 },
             });
