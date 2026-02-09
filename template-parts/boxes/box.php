@@ -4,8 +4,8 @@ $query_to_use = $GLOBALS['box_query'] ?? $wp_query;
 if ($query_to_use->have_posts()) :
     while ($query_to_use->have_posts()) : $query_to_use->the_post(); ?>
         <div class="box">
-            <a class="Img" href="<?php the_permalink(); ?>">
-                <?php the_post_thumbnail('medium', ['loading' => 'lazy']); ?>
+            <a class="Img" href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>">
+                <?php the_post_thumbnail('medium', ['loading' => 'lazy', 'alt' => get_the_title()]); ?>
             </a>
             <div class="Content">
                 <?php if (in_category(pll_get_term(90))) : ///novinky?>

@@ -133,6 +133,52 @@ function ufobufo_enqueue_comment_reply_script()
     }
 }
 
+/**
+ * Add thumbnail column to posts list in admin
+ */
+add_filter('manage_posts_columns', 'ufobufo_add_thumbnail_column');
+function ufobufo_add_thumbnail_column($columns) {
+    $new_columns = array();
+    
+    foreach ($columns as $key => $value) {
+        if ($key === 'title') {
+            $new_columns['thumbnail'] = __('Thumbnail', 'ufobufo');
+        }
+        $new_columns[$key] = $value;
+    }
+    
+    return $new_columns;
+}
+
+add_action('manage_posts_custom_column', 'ufobufo_display_thumbnail_column', 10, 2);
+function ufobufo_display_thumbnail_column($column, $post_id) {
+    if ($column === 'thumbnail') {
+        if (has_post_thumbnail($post_id)) {
+            echo wp_get_attachment_image(
+                get_post_thumbnail_id($post_id),
+                array(80, 80),
+                false,
+                array(
+                    'style' => 'max-width: 80px; height: auto; display: block;',
+                    'loading' => 'lazy'
+                )
+            );
+        } else {
+            echo '<span style="color: #999;">—</span>';
+        }
+    }
+}
+
+add_filter('manage_posts_columns_css', 'ufobufo_thumbnail_column_width');
+function ufobufo_thumbnail_column_width() {
+    echo '<style>
+        .column-thumbnail {
+            width: 100px;
+            text-align: center;
+        }
+    </style>';
+}
+
 add_filter('the_title', 'ufobufo_title');
 function ufobufo_title($title)
 {

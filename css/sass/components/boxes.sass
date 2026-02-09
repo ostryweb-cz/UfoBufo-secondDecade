@@ -39,27 +39,27 @@
         box-shadow: 0 5px 20px 0 rgba(14, 20, 60, 0.9)
         transition: all 300ms ease-in-out
         .Img
-            display: block
+            display: flex
             width: 100%
-            height: auto
             overflow: hidden !important
             position: relative
             background: $bluedark-color
+            align-items: center
+            justify-content: center
             &:after
-                width: calc(100% - 10px)
-                height: calc(100% - 10px)
+                width: calc(100% - 40px)
+                height: calc(100% - 40px)
                 position: absolute
-                left: 5px
-                top: 5px
-                box-shadow: inset 0 0 0 1px  rgba(255, 255, 255, .25)
+                left: 20px
+                top: 20px
+                box-shadow: inset 0 0 0 1px  rgba(255, 255, 255, .0)
                 content: ""
                 transition: all 300ms ease-in-out
             img
-                max-width: 100%
-                min-width: 100%
-                transform: scale(1.05)
-                transition: all 400ms ease-in-out
+                width: 100%
                 height: auto
+                transform: scale(1)
+                transition: all 400ms ease-in-out
 
         .Content
             padding: 20px
@@ -94,13 +94,13 @@
             box-shadow: 0 5px 20px 0 rgba(0, 0, 0, 0.7)
             .Img
                 &:after
-                    width: calc(100% - 40px)
-                    height: calc(100% - 40px)
-                    left: 20px
-                    top: 20px
-                    box-shadow: inset 0 0 0 1px  rgba(255, 255, 255, .0)
+                    width: calc(100% - 10px)
+                    height: calc(100% - 15px)
+                    left: 5px
+                    top: 5px
+                    box-shadow: inset 0 0 0 1px hsla(0, 0%, 100%, .25)
                 img
-                    transform: scale(1.1)
+                    transform: scale(1.02)
     &--4
         .box
             width: calc(25% - 20px)

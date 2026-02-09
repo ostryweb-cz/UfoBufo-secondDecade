@@ -336,6 +336,15 @@ npm run dist
 
 ## Recent Changes (February 2026)
 
+### Gallery Layout Refinement & Admin Improvements (February 9, 2026)
+- ✅ **Fixed image zoom behavior** - Default no zoom (scale 1), hover zoom to 1.02
+- ✅ **Reversed hover border effect** - Border frame shows on hover only with proper styling
+- ✅ **Removed fixed image heights** - Images display at natural full height without cropping
+- ✅ **Improved image flexibility** - Uses flexbox container for proper alignment and sizing
+- ✅ **Enhanced SEO** - Added alt text (from post title) and title attributes to all images
+- ✅ **Admin thumbnail column** - Added thumbnail preview column to WP posts list (80x80px)
+- ✅ **Simplified box markup** - Removed `.Img` wrapper while keeping CSS styles
+
 ### Gallery Masonry Layout (February 8, 2026)
 - ✅ **Converted gallery to true masonry** - Switched from CSS columns to CSS Grid with `grid-auto-flow: dense`
 - ✅ **Zero gaps between images** - Set `gap: 0` and fixed `grid-auto-rows: 200px`
