@@ -30,8 +30,7 @@ function ufobufo_setup()
         'script'
     ));
     
-    // Register custom image sizes
-    add_image_size('gallery-big', 1400, 939, true);
+    // Custom image sizes have been removed - WordPress default sizes are used instead
 
     remove_action( 'wp_head', 'wp_generator' );
     remove_action( 'wp_head', 'wlwmanifest_link' );
@@ -1349,7 +1348,7 @@ function ufobufo_get_stage_image_html( string $stage_key, int $year ): string
         $full_url  = wp_get_attachment_image_url($thumb_id, 'full');
         $image_html = wp_get_attachment_image(
             $thumb_id,
-            'gallery-big',
+            'medium',
             false,
             [
                 'loading'  => 'lazy',
