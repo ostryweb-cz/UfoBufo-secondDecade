@@ -32,7 +32,6 @@ function ufobufo_setup()
     
     // Register custom image sizes
     add_image_size('gallery-big', 1400, 939, true);
-    add_image_size('card-thumb', 330, 250, true);
 
     remove_action( 'wp_head', 'wp_generator' );
     remove_action( 'wp_head', 'wlwmanifest_link' );
