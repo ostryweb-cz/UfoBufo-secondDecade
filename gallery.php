@@ -3,7 +3,7 @@
 <?php get_header(); ?>
 <?php ufobufo_body_header(); ?>
 
-<div class="block">
+<div class="block gallery">
     <?php include(locate_template('template-parts/page-title.php')); ?>
   <div class="block__inner">
       <div class="row">
