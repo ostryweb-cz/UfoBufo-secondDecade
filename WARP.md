@@ -339,8 +339,8 @@ npm run dist
 ### Cleaned Up Unused WordPress Image Sizes (February 9, 2026)
 - ✅ **Removed all custom image sizes** - Deleted `gallery-thumb` (280x190), `card-thumb-2x` (660x500), `card-thumb` (330x250), and `gallery-big` (1400x939)
 - ✅ **Removed index.php** - Deleted unused fallback template that only referenced `card-thumb` size
-- ✅ **Using WordPress defaults only** - All image display now uses `'medium'` size (300x300 by default)
-- ✅ **Stage images use medium** - Replaced `gallery-big` with `'medium'` size in `ufobufo_get_stage_image_html()` function
+- ✅ **Using WordPress defaults only** - Gallery templates use `'medium'` size (300x300 by default)
+- ✅ **Stage images use full size** - `ufobufo_get_stage_image_html()` uses `'full'` size for maximum quality
 
 ### Gallery Layout Refinement & Admin Improvements (February 9, 2026)
 - ✅ **Fixed image zoom behavior** - Default no zoom (scale 1), hover zoom to 1.02

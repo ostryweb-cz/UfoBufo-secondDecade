@@ -1348,7 +1348,7 @@ function ufobufo_get_stage_image_html( string $stage_key, int $year ): string
         $full_url  = wp_get_attachment_image_url($thumb_id, 'full');
         $image_html = wp_get_attachment_image(
             $thumb_id,
-            'medium',
+            'full',
             false,
             [
                 'loading'  => 'lazy',
